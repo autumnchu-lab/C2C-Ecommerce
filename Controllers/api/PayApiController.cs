@@ -196,7 +196,6 @@ namespace Bake.Controllers.api
                 (order.PaymentMethodId == 1 ? "VACC=1" : "VACC=0"),
             };
             string rawTradeInfo = string.Join("&", payData).Trim();
-            Console.WriteLine($"加密前字串:{rawTradeInfo}");
 
             // 交易資料做 AES加密、SHA256 加密
             string TradeInfoEncrypt = EncryptAESHex(rawTradeInfo, hashKey, hashIV);
@@ -213,12 +212,6 @@ namespace Bake.Controllers.api
                 PayGateWay = _config["NewebPayConfig:PayGateWay"]
             };
 
-            //檢查用
-            //string testDecrypt = DecryptAESHex(TradeInfoEncrypt, hashKey, hashIV);
-            //Console.WriteLine($"反向解密結果: {testDecrypt}");
-            //Console.WriteLine($"[Debug] Raw: {rawTradeInfo}");
-            //string shaSource_ = $"HashKey={hashKey}&{TradeInfoEncrypt.ToUpper()}&HashIV={hashIV}";
-            //Console.WriteLine($"[Debug] SHA Source: {shaSource_}");
             return Ok(new { isCod=false, payData = response});
         }
 
