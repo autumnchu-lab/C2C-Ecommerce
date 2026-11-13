@@ -1,0 +1,337 @@
+﻿@model Bake.ViewModel.ShopFront.ShopProfilePageViewModel
+
+@{
+    ViewData["Title"] = Model.ShopInfo.ShopName;
+}
+
+@section Styles {
+    <style>
+        .shop-page-wrap {
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+        }
+
+        .shop-page-shell {
+            width: 100%;
+            max-width: 1680px;
+            margin: 0 auto;
+            padding-left: clamp(16px, 2vw, 36px);
+            padding-right: clamp(16px, 2vw, 36px);
+        }
+
+        .shop-filter-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .shop-filter-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+        }
+
+        .shop-filter-section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: .9rem;
+        }
+
+        .shop-category-link {
+            display: block;
+            color: #444;
+            text-decoration: none;
+            padding: .3rem 0;
+        }
+
+            .shop-category-link.active,
+            .shop-category-link:hover {
+                color: #f2a93b;
+                font-weight: 700;
+            }
+
+        .shop-price-option {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            margin-bottom: .85rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .shop-price-option input {
+            margin: 0;
+        }
+
+        #shop-product-section.shop-loading {
+            opacity: .45;
+            pointer-events: none;
+            transition: opacity .2s ease;
+        }
+
+        @@media (max-width: 991.98px) {
+            .shop-filter-card {
+                position: static;
+                top: auto;
+            }
+
+            .shop-page-shell {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+        }
+    </style>
+}
+
+<div class="container-fluid shop-page-wrap shop-page-shell">
+
+    @await Html.PartialAsync("_ShopProfilePartial", Model.ShopInfo)
+    <div class="row g-4">
+    @if (Model.ShopInfo.StatusId == 1)
+    {
+        <div class="col-12 text-center py-5">
+            <h4 class="fw-bold">此店鋪暫停營業中</h4>
+            <p class="text-muted">店家目前暫時休息，請稍後再來逛逛</p>
+        </div>
+    }
+    else
+    {
+        <aside class="col-lg-3">
+            <div class="shop-filter-card">
+
+                <form id="shop-filter-form"
+                      method="get"
+                      asp-controller="Shop"
+                      asp-action="Index"
+                      asp-route-id="@Model.ShopInfo.UserId">
+
+                    <input type="hidden" name="keyword" value="@Model.Keyword" />
+                    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                    <input type="hidden" name="page" value="@Model.Page" />
+
+                    <div class="mb-4">
+                        <div class="shop-filter-section-title">商品分類</div>
+
+                            <a class="shop-category-link @(Model.CategoryId == null ? "active" : "")"
+                                   href="#"
+                                   data-category-id="">
+                                全部 <span class="text-muted">(@Model.Categories.Sum(x => x.Count))</span>
+                            </a>
+
+                            @foreach (var category in Model.Categories)
+                            {
+                                <a class="shop-category-link @(Model.CategoryId == category.CategoryId ? "active" : "")"
+                                       href="#"
+                                       data-category-id="@category.CategoryId">
+                                    @category.CategoryName <span class="text-muted">(@category.Count)</span>
+                                </a>
+                            }
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="shop-filter-section-title">排序</div>
+                        <select name="sort" class="form-select">
+                            @if (Model.Sort == "latest")
+                            {
+                                <option value="latest" selected>最新</option>
+                            }
+                            else
+                            {
+                                <option value="latest">最新</option>
+                            }
+
+                            @if (Model.Sort == "rating")
+                            {
+                                <option value="rating" selected>評價高</option>
+                            }
+                            else
+                            {
+                                <option value="rating">評價高</option>
+                            }
+
+                            @if (Model.Sort == "price_asc")
+                            {
+                                <option value="price_asc" selected>價格低到高</option>
+                            }
+                            else
+                            {
+                                <option value="price_asc">價格低到高</option>
+                            }
+
+                            @if (Model.Sort == "price_desc")
+                            {
+                                <option value="price_desc" selected>價格高到低</option>
+                            }
+                            else
+                            {
+                                <option value="price_desc">價格高到低</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="shop-filter-section-title">金額</div>
+
+                        <label class="shop-price-option">
+                            @if (Model.PriceRange == "all")
+                            {
+                                <input type="radio" name="priceRange" value="all" checked />
+                            }
+                            else
+                            {
+                                <input type="radio" name="priceRange" value="all" />
+                            }
+                            <span>全部</span>
+                        </label>
+
+                        <label class="shop-price-option">
+                            @if (Model.PriceRange == "0-100")
+                            {
+                                <input type="radio" name="priceRange" value="0-100" checked />
+                            }
+                            else
+                            {
+                                <input type="radio" name="priceRange" value="0-100" />
+                            }
+                            <span>NT$100 以下</span>
+                        </label>
+
+                        <label class="shop-price-option">
+                            @if (Model.PriceRange == "100-300")
+                            {
+                                <input type="radio" name="priceRange" value="100-300" checked />
+                            }
+                            else
+                            {
+                                <input type="radio" name="priceRange" value="100-300" />
+                            }
+                            <span>NT$100 - 300</span>
+                        </label>
+
+                        <label class="shop-price-option">
+                            @if (Model.PriceRange == "300-500")
+                            {
+                                <input type="radio" name="priceRange" value="300-500" checked />
+                            }
+                            else
+                            {
+                                <input type="radio" name="priceRange" value="300-500" />
+                            }
+                            <span>NT$300 - 500</span>
+                        </label>
+
+                        <label class="shop-price-option">
+                            @if (Model.PriceRange == "500-up")
+                            {
+                                <input type="radio" name="priceRange" value="500-up" checked />
+                            }
+                            else
+                            {
+                                <input type="radio" name="priceRange" value="500-up" />
+                            }
+                            <span>NT$500 以上</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </aside>
+            <main class="col-lg-9">
+                <div id="shop-product-section">
+                    @await Html.PartialAsync("_ShopProfileProductListPartial", Model)
+                </div>
+        </main>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            const $filterForm = $("#shop-filter-form");
+            const $productSection = $("#shop-product-section");
+
+            if (!$filterForm.length || !$productSection.length) return;
+
+            //載入產品的函式
+            function loadShopProducts(url, pushState = true) {
+                $productSection.addClass("shop-loading");
+
+                $.ajax({
+                    url: url,
+                    method: "GET",
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                    success: function (html) {
+                        $productSection.html(html); // 更換HTML內容
+
+                        if (pushState) {
+                            history.pushState({}, "", url);
+                        }
+
+                        // 畫面平滑捲動到頂端
+                        $('html, body').animate({
+                            scrollTop: $productSection.offset().top - 100
+                        }, 500);
+                    },
+                    error: function () {
+                        // 失敗時的降級處理>整頁跳轉
+                        window.location.href = url;
+                    },
+                    complete: function () {
+                        $productSection.removeClass("shop-loading");
+                    }
+                });
+            }
+
+            function buildFormUrl() {
+                const action = $filterForm.attr("action");
+                const queryString = $filterForm.serialize(); // jQ的serialize，自動抓取表單所有欄位並轉成query string
+                return action + "?" + queryString;
+            }
+
+            // --- 事件監聽區 ---
+
+            // 分類連結點擊
+            $(".shop-category-link").on("click", function (e) {
+                e.preventDefault();
+                const categoryId = $(this).data("category-id") || "";
+                
+                $("input[name='categoryId']").val(categoryId); // 填入隱藏欄位
+                $("input[name='page']").val(1);                // 重置頁碼
+
+                // 切換active樣式
+                $(".shop-category-link").removeClass("active");
+                $(this).addClass("active");
+
+                loadShopProducts(buildFormUrl());
+            });
+
+            // 排序選擇 & 價格區間(change 事件)
+            $("select[name='sort'], input[name='priceRange']").on("change", function () {
+                $("input[name='page']").val(1);
+                loadShopProducts(buildFormUrl());
+            });
+
+            // 表單送出(搜尋功能)
+            $filterForm.on("submit", function (e) {
+                e.preventDefault();
+                $("input[name='page']").val(1);
+                loadShopProducts(buildFormUrl());
+            });
+
+            // 動態產生的分頁按鈕(委派事件監聽)
+            $(document).on("click", "a[data-shop-ajax='true']", function (e) {
+                e.preventDefault();
+                const url = $(this).attr("href");
+                
+                // 從網址中抓取page參數更新回隱藏表單
+                const page = new URL(url, window.location.origin).searchParams.get("page") || "1";
+                $("input[name='page']").val(page);
+
+                loadShopProducts(buildFormUrl());
+            });
+        });
+    </script>
+}

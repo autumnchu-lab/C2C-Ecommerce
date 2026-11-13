@@ -1,0 +1,394 @@
+﻿@model Bake.Areas.Seller.ViewModels.DashboardViewModel
+
+<body>
+    <main class="main-wrapper" style="margin-left: 0; padding-left: 0;">
+        <!-- ========== Analytics Dashboard start ========== -->
+        <section class="section">
+            <div class="container-fluid">
+                <!-- ========== title-wrapper start ========== -->
+                <div class="title-wrapper pt-30">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="title">
+                                <h2>營運總覽</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row -->
+                </div>
+                <!-- ========== 卡片:今日營收、待出貨訂單、本月總訂單數、低庫存警示* ========== -->
+                <div class="row">
+                    <!-- 今日營收 -->
+                    <div class="col">
+                        <div class="icon-card mb-30">
+                            <div class="icon purple">
+                                <i class="lni lni-users"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">今日營收</h6>
+                                <h3 class="text-bold mb-10">@Model.TodayRevenue.ToString("N0")</h3>
+                                
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                    <!-- 本月總營收 -->
+                    <div class="col">
+                        <div class="icon-card mb-30">
+                            <div class="icon orange">
+                                <i class="lni lni-pie-chart"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">本月總營收</h6>
+                                <h3 class="text-bold mb-10">@Model.MonthRevenue.ToString("N0")</h3>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 待出貨訂單 -->
+                    <div class="col">
+                        <div class="icon-card mb-30">
+                            <div class="icon success">
+                                <i class="lni lni-eye"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">待出貨訂單</h6>
+                                <h3 class="text-bold mb-10">@Model.PendingOrdersCount</h3>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 本月總訂單數 -->
+                    <div class="col">
+                        <div class="icon-card mb-30">
+                            <div class="icon orange">
+                                <i class="lni lni-pie-chart"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">本月總訂單數</h6>
+                                <h3 class="text-bold mb-10">@Model.TotalOrdersMonth</h3>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 在架商品總數 -->
+                    <div class="col">
+                        <div class="icon-card mb-30">
+                            <div class="icon primary">
+                                <i class="lni lni-thumbs-up"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">在架商品總數</h6>
+                                <h3 class="text-bold mb-10">@Model.TotalProductsCount</h3>
+                                
+                            </div>
+                        </div>
+                        <!-- End Icon Cart -->
+                    </div>
+                </div>
+                <!-- 卡片資訊結束 -->
+                <!-- 趨勢圖：顯示過去 7 天的訂單量變化。 -->
+                <div class="row">
+                    <div class="col-lg">
+                        <div class="card-style mb-30">
+                            <div class="title d-flex justify-content-between">
+                                <div class="left">
+                                    <h6 class="text-medium mb-20">過去 7 天訂單量變化</h6>
+                                </div>
+                            </div>
+                            <!-- End Title -->
+                            <div class="chart">
+                                <canvas id="trendChart" style="width: 100%; height: 400px;"></canvas>
+                            </div>
+                            <!-- End Chart -->
+                        </div>
+                    </div>
+                    <!-- End Col -->
+                </div>
+                <div class="row">
+                    <!-- 圓餅圖：顯示不同類別產品的銷售佔比。 -->
+                    <div class="col-lg-6">
+                        <div class="card-style mb-30">
+                            <div class="title d-flex justify-content-between">
+                                <div class="left">
+                                    <h6 class="text-medium mb-20">類別產品銷售佔比</h6>
+                                </div>
+                            </div>
+                            <!-- End Title -->
+                            <div class="chart max-w-350 mx-auto">
+                                <canvas id="categoryChart" style="width: 100%; height: 350px"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 低庫存警示 -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-white py-3 d-flex align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>低庫存警示
+                                </h6>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-3">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="ps-3">商品名稱</th>
+                                                <th class="text-center">目前庫存</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.LowStock != null && Model.LowStock.Any())
+                                            {
+                                                @foreach (var item in Model.LowStock)
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3 fw-bold">@item.LowPName</td>
+                                                        <td class="text-center">
+                                                            <span class="badge @(item.Stock <= 2 ? "bg-danger" : "bg-warning text-dark")">
+                                                                @item.Stock
+                                                            </span>
+                                                        </td>
+                                                       
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="3" class="text-center py-4 text-muted">
+                                                        <i class="fas fa-check-circle text-success me-1"></i> 目前庫存充足
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="p-3 text-end border-top">
+                                    <a asp-area="Seller" asp-controller="SellerProduct" asp-action="All"
+                                           class="btn btn-sm btn-outline-primary shadow-sm">
+                                        <i class="lni lni-cog"></i> 前往管理
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- 商品牆：列出目前賣最好的前幾名甜點。 -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-style mb-30">
+                            <div class="title d-flex justify-content-between align-items-center mb-20">
+                                <div class="left">
+                                    <h6 class="text-medium">熱門商品排行 (Top 5)</h6>
+                                </div>
+                                <div class="right">
+                                    <div class="select-style-1 mb-0">
+                                        <div class="select-position">
+                                            <select class="bg-transparent border-0 lni-text-size">
+                                                <option value="">本月</option>
+                                                <option value="">上月</option>
+                                                <option value="">年度</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table top-selling-table">
+                                    <thead>
+                                        <tr>
+                                            <th>排行</th>
+                                            <th>商品</th>
+                                            <th class="text-center">類別</th>
+                                            <th class="text-center">銷量</th>
+                                            <th class="text-center">累積營收</th>
+                                            <th class="text-end">趨勢</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.TopProducts != null && Model.TopProducts.Any())
+                                        {
+                                            int rank = 1;
+                                            foreach (var product in Model.TopProducts)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="check-input-primary-light">
+                                                            @if (rank <= 3)
+                                                            {
+                                                                <span class="badge rounded-pill bg-primary">No.@rank</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge rounded-pill bg-light text-dark">@rank</span>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="product d-flex align-items-center">
+                                                            <div class="image me-3" style="width: 50px; height: 50px; overflow: hidden; border-radius: 8px;">
+                                                                <img src="@product.ImageUrl" alt="@product.ProductName" style="width: 100%; height: 100%; object-fit: cover;" />
+                                                            </div>
+                                                            <p class="text-sm fw-bold">@product.ProductName</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <p class="text-sm">@product.CategoryName</p>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <p class="text-sm fw-bold">@product.TotalSales 件</p>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <p class="text-sm text-success fw-bold">$@product.Revenue.ToString("N0")</p>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="action">
+                                                            <button class="text-primary border-0 bg-transparent">
+                                                                <i class="lni lni-stats-up"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                rank++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4 text-muted">暫無銷售統計數據</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Row -->
+            </div>
+            <!-- end container -->
+        </section>
+        <!-- ========== section end ========== -->
+        <!-- ========== Marketing Dashboard ========== -->
+        <section class="marketingDashboard">
+            <div class="container-fluid">
+                <!-- ========== title-wrapper start ========== -->
+                <div class="title-wrapper pt-30">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="title">
+                                <h2>社群表現</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ========== title-wrapper end ========== -->
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="icon-card icon-card-4 mb-30">
+                            <div class="card-content text-center">
+                                <p class="mb-2 fw-medium">被追蹤數</p>
+                                <h3 class="text-bold mb-1">@Model.FollowersCount</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Row -->
+        </div>
+        <!-- end -->
+    </section>
+    <!-- ========== Marketing Dashboard end ========== -->
+</main>
+<!-- ======== main-wrapper end =========== -->
+</body>
+
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const categoryColors = [
+        '#624BFF', // 經典靛藍
+        '#FB7D5B', // 活力珊瑚橘
+        '#2E91FF', // 天空藍
+        '#F151B1', // 浪漫野莓粉
+        '#1CCAB8', // 清新薄荷綠
+        '#8D6E63', // 溫潤可可棕
+        '#FFBE46', // 蜂蜜金黃
+        '#A155B9', // 優雅薰衣草紫
+        '#757575'  // 中性質感灰
+        ];
+        //趨勢圖
+        new Chart( document.getElementById("trendChart"),{
+            type:'line',
+            data:{
+                labels:@Html.Raw(Json.Serialize(Model.Last7DaysLabels)),
+                datasets:[{
+                    label:'日訂單量',
+                    data: @Json.Serialize(Model.Last7DaysData),
+                    backgroundColor: "transparent",
+                    borderColor: '#FAA916',
+                    borderWidth: 8,
+                    tension:0.3,
+                    pointHoverBorderWidth: 3,
+                    fill: true,
+                    pointRadius: 8,
+                    pointBackgroundColor: "transparent",
+                    pointHoverBackgroundColor: "#FAA916",
+                    pointBorderColor: "transparent",
+                    pointHoverBorderColor: "#fff",
+                    pointHoverRadius: 8,
+                    cubicInterpolationMode: "monotone", // Add this line for curved line
+                }],
+            },
+            options: {
+                responsive: true,
+                    plugins: {
+                        legend: {
+                        display: false // 隱藏上方的標籤文字，讓畫面更乾淨
+                        }
+                    },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                        stepSize: 1 // 確保垂直軸顯示的是整數訂單數
+                        }
+                    }
+                }
+            }
+          });
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.CategoryLabels)),
+                datasets: [{
+                data: @Json.Serialize(Model.CategoryData),
+                backgroundColor: categoryColors,
+                hoverOffset: 15,                 
+                borderWidth: 2,
+                borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom', // 標籤放下面
+                        labels: {
+                        padding: 20,
+                        usePointStyle: true
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+
+        });
+    </script>
+}

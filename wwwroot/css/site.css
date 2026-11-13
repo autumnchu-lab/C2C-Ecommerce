@@ -1,0 +1,71 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* 覆蓋 Bootstrap nav-link 預設的黑色 */
+.nav-link {
+    color: #747474;
+}
+
+    .nav-link:hover,
+    .nav-link:focus {
+        color: #FFC43F!important;
+    }
+
+/* 特別保留導覽列主選單的深色 */
+.main-menu .nav-link {
+    color: #222222;
+}
+
+    .main-menu .nav-link:hover {
+        color: #FFC43F;
+    }
+
+/*a {
+    text-decoration: none;*/ /* 移除超連結下劃線 */
+    /*color: inherit;*/ /* 讓顏色跟隨父元素，不要變藍色 */
+/*}
+
+a:hover {
+        color: inherit;
+}*/
+
+.social-icon {
+    font-size: 24px;
+    color: #000;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.social-icon:hover {
+    color: #666;
+    transform: scale(1.1);
+}

@@ -1,0 +1,387 @@
+﻿@model Bake.ViewModels.Social.PostDetailViewModel
+@Html.AntiForgeryToken()
+@{
+    ViewData["Title"] = "貼文詳情";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/PostDetailCss.css" / >
+}
+
+
+<!-- ============================================================ -->
+<!--                      頁面主體                                 -->
+<!-- ============================================================ -->
+<div class="container-fluid py-4">
+    <div class="row g-4">
+
+        @* 訊息 *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <!-- ==================== 左欄：主內容 ==================== -->
+        <div class="col-lg-8">
+
+            <div class="detail-card">
+                <div class="p-4">
+
+                    <!-- 標題 -->
+                    @if (Model.IsActivity)
+                    {
+                        <h4 class="fw-bold mb-3">
+                            @Model.EventDetail.EventTime.ToString("yyyy/M/d (ddd) HH:mm")
+                            -@Model.EventDetail.EventEndTime.ToString("HH:mm") ｜ 「@Model.Title」
+                        </h4>
+                    }
+                    else
+                    {
+                        <h4 class="fw-bold mb-3">「@Model.Title」</h4>
+                    }
+                    @if (Model.IsActivity && Model.EventDetail.EventTime < DateTime.Now)
+                    {
+                        <span class="badge bg-primary fs-6 mb-3">此活動已結束</span>
+                    }
+                    @*---     活動發起者專用的狀態顯示   --- *@
+                    @if (Model.IsActivity && !Model.IsPublished && Model.IsOwner)
+                    {
+                        <div class="alert alert-secondary mb-3">
+                            此活動目前為已下架狀態，前台列表不會顯示，也不可再報名。
+                        </div>
+                    }
+
+                    <!-- 圖片 -->
+                    
+                    <img src="@Model.CoverImageUrl" class="img-fluid" />
+                    <br />
+                    <!-- ===== 活動內容 ===== -->
+                    @if (Model.IsActivity)
+                    {
+                        <div class="mt-4">
+                            <div class="event-meta__label mb-1">日期時間</div>
+                            <p class="fw-bold mb-4">@Model.EventDetail.EventTime.ToString("yyyy/M/d (ddd) tt h:mm")-@Model.EventDetail.EventEndTime.ToString("h:mm")</p>
+
+                            <div class="event-meta__label mb-1">活動費用</div>
+                            <p class="fw-bold mb-4">
+                               @(Model.EventDetail.Price == 0 || Model.EventDetail.Price == null ? "免費" : "NT$" + Model.EventDetail.Price)
+                            </p>
+
+                            <div class="event-meta__label mb-1">活動簡介</div>
+
+                            <p style="white-space: pre-line;">
+                               @Model.Content
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- ===== 貼文內容 ===== -->
+                        <br>
+                        <p style="white-space: pre-line;">
+                               @Model.Content
+                        </p>
+                    }
+
+                </div>
+
+                <!-- 讚 / 收藏 -->
+                <div class="action-bar">
+                    <button class="action-bar__btn" id="btn-like" data-id="@Model.PostId">
+                        <i class="@(Model.IsLiked ? "fa-solid" : "fa-regular") fa-thumbs-up"></i> 
+                        <span class="text">@(Model.IsLiked ? "已按讚" : "讚")</span>
+                    </button>
+                    <button class="action-bar__btn" id="btn-favorite" data-id="@Model.PostId">
+                        <i class="@(Model.IsFavorited ? "fa-solid" : "fa-regular") fa-heart"></i>
+                        <span class="text">@(Model.IsFavorited ? "已收藏" : "收藏")</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== 留言區（僅貼文顯示）===== -->
+            <div class="detail-card mt-4 p-4 comment-box" id="comment-app" v-cloak data-authenticated="@User.Identity.IsAuthenticated.ToString().ToLower()">
+                <h5 class="fw-bold mb-3">留言</h5>
+                    <template v-if="isLogin">
+                        <textarea class="form-control" v-model="content" rows="4" placeholder="分享你的想法..."></textarea>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button class="btn btn-primary px-4 fw-bold" @@click="addComment" :disabled="!content.trim()">發表留言</button>
+                            </div>
+                        </template>
+                    <template v-else>
+                        <p class="text-muted">請先 <a asp-controller="Home" asp-action="Login">登入</a> 才能留言</p>
+                    </template>
+                <!-- 顯示已有的留言 -->
+                <div v-for="c in comments" :key="c.createdAt" class="d-flex gap-3 mt-4 pt-3 border-top">
+                    <img :src="c.avatarUrl + '?v=' + Date.now()" class="rounded-circle" style="width:40px; height:40px; object-fit:cover;" />
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold small">{{c.userName}}</span>
+                            <span class="text-muted small">{{c.createdAt}}</span>
+                        </div>
+                        <p class="mb-0 mt-1">{{c.content}}</p>
+                    </div>
+                </div>
+                    <p v-if="comments.length===0" class="text-muted mt-3">還沒有留言，成為第一個留言的人吧！</p>
+            </div>
+        </div>
+        <!-- ==================== 右欄：側邊欄 ==================== -->
+        <div class="col-lg-4">
+
+            <!-- 作者 / 主辦人 -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">
+                        @(Model.IsActivity ? "關於主辦人" : "關於作者")
+                    </h6>
+                    <button class="btn-follow" id="btn-follow" data-id="@Model.Author.UserId">
+                        <span class="text">@(Model.IsFollowed ? "追蹤中" : "追蹤")</span>
+                    </button>
+                </div>
+                <div class="detail-card p-3">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                         <img src="@Model.Author.Avatar" class="rounded-circle" style="width:40px; height:40px; object-fit:cover;" />
+                        <div>
+                            <a asp-controller="User" asp-action="UserDetail" asp-route-id="@Model.Author.UserId" class="fw-bold text-decoration-none">@Model.Author.DisplayName</a>
+                            <small class="text-muted">@Model.Author.ShareCount 分享 · @Model.Author.FollowerCount 粉絲</small>
+                        </div>
+                    </div>
+                    <p class="mb-0 small text-muted">
+                        @Model.Author.Bio
+                    </p>
+                </div>
+            </div>
+
+            <!-- 活動 CTA（僅活動顯示） -->
+            @* @if (Model.IsActivity)
+            {
+                <div class="mb-4 d-flex flex-column gap-3">
+                    <a href="#" class="btn-cta-primary">我要報名</a>
+                    <div>
+                        <h6 class="fw-bold mb-2">我要詢問</h6>
+                        <a href="@Url.Action("StartChat", "Chat", new { targetId = Model.Author.UserId })" class="btn-cta-outline">私訊主辦人</a>
+                    </div>
+                </div>
+            } *@
+
+             @*---     報名/詢問/編輯/下架按鈕   --- *@
+            @if (Model.IsActivity)
+            {
+                <div class="mb-4 d-flex flex-column gap-3">
+
+                    @if (Model.IsOwner)
+                    {
+                        @if (Model.IsPublished)
+                        {
+                            <a asp-controller="Post"
+                                   asp-action="EditEvent"
+                                   asp-route-postId="@Model.PostId"
+                                   class="btn-cta-primary">
+                                編輯活動
+                            </a>
+                        }
+
+                        @if (Model.IsPublished)
+                        {
+                            <form asp-controller="Post"
+                                  asp-action="UnpublishEvent"
+                                  asp-route-postId="@Model.PostId"
+                                  method="post"
+                                  onsubmit="return confirm('確認要下架這個活動嗎？下架後前台列表將不再顯示。');">
+                                <button type="submit" class="btn-cta-outline">下架活動</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="btn-cta-secondary text-center">活動已下架</div>
+                        }
+                    }
+                    else if (Model.IsPublished && Model.EventDetail.EventTime > DateTime.Now)
+                    {
+                        @if (Model.IsCurrentUserRegistered)
+                        {
+                            <div class="btn-cta-outline text-center">你已報名此活動</div>
+
+                            @if (Model.CanCurrentUserCancelRegistration)
+                            {
+                                <form asp-controller="Post"
+                                      asp-action="CancelRegistration"
+                                      asp-route-eventId="@Model.EventDetail.EventId"
+                                      method="post"
+                                      onsubmit="return confirm('確認要取消報名嗎？');">
+                                    <button type="submit" class="btn-cta-primary">取消報名</button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <a href="/apply/@Model.EventDetail.EventId" class="btn-cta-primary">我要報名</a>
+                        }
+                        <div>
+                            <a href="@Url.Action("StartChat", "Chat", new { targetId = Model.Author.UserId })" class="btn-cta-outline">私訊主辦人</a>
+                        </div>
+                    }
+                </div>
+            }
+
+
+            <!-- 關鍵字 -->
+            <div>
+                <h6 class="fw-bold mb-3">
+                    @(Model.IsActivity ? "活動關鍵字" : "貼文關鍵字")
+                </h6>
+                <div class="d-flex flex-wrap gap-2">
+                    
+                        @foreach(var tag in Model.Tags)
+                        {
+                            <span class="tag-pill">@tag.TagName</span>
+                        }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){  //讚&收藏
+            const btnlike = document.getElementById('btn-like');
+            btnlike.addEventListener('click', function(){
+                const postId = this.getAttribute('data-id');
+                handleToggle(this, '/Post/PostToggleLike', postId);
+            });
+            const btnfavorite = document.getElementById('btn-favorite');
+            btnfavorite.addEventListener('click', function(){
+                const postId = this.getAttribute('data-id');
+                handleToggle(this, '/Post/PostToggleFavorite',postId)
+            });
+
+            async function handleToggle(btn, url, postId){
+                try{
+                    btn.style.pointerEvents = 'none';
+                    const response = await fetch(`${url}?postId=${postId}`, {    // Query String
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if(result.success){
+                        const icon = btn.querySelector('i');
+                        const text = btn.querySelector('.text');
+
+                        if(result.isLiked || result.isFavorited ){ // 後端回傳狀態
+                            icon.classList.remove('fa-regular');
+                            icon.classList.add('fa-solid');
+                            // 根據按鈕類型更新文字
+                            text.innerText = btn.id === 'btn-like' ? '已讚' : '已收藏';
+                        }else {
+                            icon.classList.remove('fa-solid');
+                            icon.classList.add('fa-regular');
+                            text.innerText = btn.id === 'btn-like' ? '讚' : '收藏';
+                        }
+                    }else {
+                        alert(result.message);
+                        if (result.message.includes("登入")) {
+                            window.location.href = '/Home/Login';
+                        }
+                    }
+                }
+                catch(error){
+                    console.error('Error:', error);
+                }
+                finally{
+                    btn.style.pointerEvents = 'auto';
+                }
+            }
+
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnFollow = document.getElementById('btn-follow');
+
+            if (btnFollow) {
+                btnFollow.addEventListener('click', async function () {
+                    const beFollowId = this.getAttribute('data-id');
+                    const textSpan = this.querySelector('.text'); // 取得內層 span
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                    try {
+                        // 1. 鎖定按鈕防止連點
+                        this.style.pointerEvents = 'none';
+
+                        // 2. 發送請求 (對應你的後端參數 beFollowId)
+                        const response = await fetch(`/Post/UserToggleFollow?beFollowId=${beFollowId}`, {
+                            method: 'POST',
+                            headers: { 'RequestVerificationToken': token }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // 3. 根據後端回傳 result.isFollowed 更新 UI
+                            if (result.isFollowed) {
+                                this.classList.add('followed');
+                                if (textSpan) textSpan.innerText = '已追蹤';
+                            } else {
+                                this.classList.remove('followed');
+                                if (textSpan) textSpan.innerText = '追蹤';
+                            }
+                        } else {
+                            alert(result.message);
+                            if (result.message.includes("請先登入")) {
+                                window.location.href = '/Home/Login';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('追蹤功能出錯:', error);
+                    } finally {
+                        // 4. 解除鎖定
+                        this.style.pointerEvents = 'auto';
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        var app=Vue.createApp({
+            data(){
+                return{
+                    content:'',
+                    comments:[],
+                    postId:@Model.PostId,
+                    isLogin: document.getElementById('comment-app').dataset.authenticated === 'true'
+                }
+            },
+            async mounted(){
+                const res= await fetch(`/api/PostApi/GetComments?postId=${this.postId}`);
+                this.comments=await res.json();
+            },
+            methods:{
+                async addComment(){
+                    if(!this.content.trim())return;
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                    const res = await fetch("/api/PostApi/AddComment",{
+                     method:"POST",
+                     headers:{"Content-Type": "application/json",
+                     "RequestVerificationToken": token
+                     },
+                     body:JSON.stringify({postId:this.postId, content:this.content})
+                    });
+                    if(!res.ok)return alert("留言失敗");
+                    const data = await res.json();
+                    this.comments.push(data);
+                    this.content='';
+                }
+            }
+        }).mount("#comment-app");
+    </script>
+}
+

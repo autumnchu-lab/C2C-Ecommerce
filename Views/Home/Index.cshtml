@@ -1,0 +1,624 @@
+﻿@section Styles
+{ 
+    <link rel="stylesheet" href="~/css/homeIndexCss.css" asp-append-version="true" />
+<style>
+       
+            
+</style>
+}
+    
+
+
+<div id="product">
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="row py-3 justify-content-center">
+            <div class="d-flex  justify-content-center align-items-center　">
+                <nav class="main-menu d-flex navbar navbar-expand-lg">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                            aria-controls="offcanvasNavbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                        <div class="offcanvas-header justify-content-center">
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <ul class="navbar-nav   menu-list list-unstyled d-flex gap-md-3 mb-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="1">法式甜點</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="2">餅乾</a>
+                                </li>
+                                <li class="nav-item active">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="3">蛋糕</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index"asp-route-category="4">布丁</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="5">麵包</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="6">泡芙</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Accessories" asp-route-category="7">甜甜圈</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="8">巧克力</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index" asp-route-category="9">糖果</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-3" style="background-image: url('/images/background-pattern.jpg');background-repeat: no-repeat;background-size: cover;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="banner-blocks">
+                        <div class="banner-ad large block-1">
+                            <div class="swiper main-swiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide" style="background: url('/ProductPicture/banner/3.jpg');background-repeat: no-repeat;background-position: right bottom;">
+                                        <div class="row banner-content p-md-3 p-3">
+                                            <div class="content-wrapper col-md-6"style="background: rgba(255,255,255,0.3); backdrop-filter: blur(3px); border-radius:16px;  padding: 1rem;">
+                                                <div class="categories my-3">新鮮出爐</div>
+                                                <h3 class="banner-title">草莓季 美味蛋糕</h3>
+                                                <p>即將上市的新口味，敬請期待!</p>
+                                            </div>
+                                            <div class="img-wrapper col-md-6">
+                                                <img src="~/ProductPicture/banner/cake2.png" class="img-fluid object-fit: cover" >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <div class="swiper-slide" style="background: url('/ProductPicture/banner/1.jpg');background-repeat: no-repeat;background-position: right bottom;">
+                                            <div class="row banner-content p-md-3 p-3">
+                                            <div class="content-wrapper col-md-6" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(3px); border-radius:16px;  padding: 1rem;">
+                                                <div class="categories mb-3 pb-3">餅乾怪獸的最愛</div>
+                                                <h3 class="banner-title">經典巧克力碎餅</h3>
+                                                <p>快來嘗鮮，不試準後悔</p>
+                                            </div>
+                                                <div class="img-wrapper col-md-6">
+                                                <img src="~/ProductPicture/banner/cookie.png" class="img-fluid">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="swiper-slide" style="background: url('/ProductPicture/banner/2.jpg');background-repeat: no-repeat;background-position: right bottom;">
+                                                <div class="row banner-content p-md-3 p-3">
+                                            <div class="content-wrapper col-md-6" style="background: rgba(255,255,255,0.3); backdrop-filter: blur(3px); border-radius:16px;  padding: 1rem;">
+                                                <div class="categories mb-3 pb-3">風味升級 栗子香氣</div>
+                                                <h3 class="banner-title">法式經典蒙布朗</h3>
+                                                <p>嚴選新鮮栗子，綿密濃郁，回味無窮</p>
+                                            </div>
+                                            <div class="img-wrapper col-md-6">
+                                                <img src="~/ProductPicture/banner/cake3.png" class="img-fluid">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="swiper-pagination"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / Banner Blocks -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="bootstrap-tabs product-tabs">
+                        <div class="tabs-header d-flex justify-content-between border-bottom my-5">
+                            <h3>熱門商品</h3>
+                        </div>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
+                                <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                    <!-- 單一商品 — 複製此區塊重複使用 -->
+                                    <div class="col" v-for="product in productsByRating" :key="product.productId">
+                                        <div class="product-item" value="rating">
+                                            <span v-if="discountLabel(product.productDiscount)" class="badge bg-success position-absolute m-3">{{ discountLabel(product.productDiscount) }}</span>
+                                            <a href="#" class="btn-wishlist" :class="{'is-active' : product.isFavorited}" @@click.prevent="toggleFavorite(product)">
+                                                            <iconify-icon :key="product.isFavorited" 
+                                                                          :icon="product.isFavorited ? 'ph:heart-fill' : 'ph:heart'"
+                                                                          :style="{ color: product.isFavorited ? '#ff4d4d' : 'inherit' }"
+                                                                          width="24">
+                                                            </iconify-icon>
+                                            </a>
+                                            <figure class="mb-3">
+                                                <a :href="'/Products/Details/' + product.productId" title="Product Title">
+                                                    <img :src="product.productImage" :alt="product.productName" class="tab-image">
+                                                </a>
+                                            </figure>
+                                            <h3>{{product.productName }}</h3>
+                                            <span class="qty">{{ product.shopName }}</span>
+                                            <span class="rating">
+                                                <iconify-icon icon="ph:star-fill" style="color:#FFC43F; font-size:16px; vertical-align:-2px;"></iconify-icon>
+                                                {{ product.productRating }}
+                                            </span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <del v-if="salePrice(product.productPrice, product.productDiscount)" class="text-muted small">
+                                                    NT${{ product.productPrice }}
+                                                </del>
+                                                <span class="price">NT${{ salePrice(product.productPrice, product.productDiscount) || product.productPrice }}</span>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div class="input-group product-qty">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="quantity-left-minus btn btn-danger btn-number" @@click.prevent="product.qty = Math.max(1, product.qty - 1)">
+                                                            <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+                                                        </button>
+                                                    </span>
+                                                    <input type="text" class="form-control input-number"
+                                                            v-model.number="product.qty"
+                                                             min="1" :max="product.productQuantity"
+                                                            style="min-width: 40px !important; padding: 2px 4px !important; text-align: center;"
+                                                    @@change="product.qty = Math.min(product.productQuantity, Math.max(1, product.qty||1))">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="quantity-right-plus btn btn-success btn-number" @@click.prevent="product.qty = Math.min(product.productQuantity, product.qty + 1)">
+                                                            <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                                   <a href="#" class="btn btn-danger btn-sm w-20 mt-1" @@click.prevent="addCart(product)">加入購物車 <iconify-icon icon="uil:shopping-cart"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / 單一商品 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="banner-ad" style="background: url('/ProductPicture/banner/pie.png') 90% center /40% no-repeat,linear-gradient(135deg, #FFFF37 0%, #f2ffc0 50%, #e8f5a3 100%);">
+                        <div class="p-3">
+
+                            <div class="categories text-primary fs-3 fw-bold">改良配方</div>
+                            <h3 class="banner-title">檸檬塔酸爽滋味</h3>
+                            <p>快搶先跟上流行，千萬不能錯過！</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="banner-ad" style="background:url('/ProductPicture/banner/cake.png') 90% center / 30% no-repeat,linear-gradient(135deg, #FFECF5 0%, #FFD2D2 50%, #FFB5B5 100%)">
+                        <div class="p-3">
+                            <div class="categories text-primary fs-3 fw-bold">新品預告</div>
+                            <h3 class="banner-title">草莓夾心蛋糕</h3>
+                            <p>春天來了，讓人想食指大動的美味！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 overflow-hidden">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="section-header d-flex flex-wrap justify-content-between my-5">
+
+                        <h2 class="section-title">新品上市</h2>
+
+                        <div class="d-flex align-items-center">
+                            <a class="btn-link text-decoration-none" asp-area="" asp-controller="Products" asp-action="Index">查看更多</a>
+                            <div class="swiper-buttons">
+                                <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
+                                <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="products-carousel swiper">
+                        <div class="swiper-wrapper">
+
+                            <!-- 單一商品 — 複製此區塊重複使用 -->
+                            <div class=" swiper-slide" v-for="product in productsByDate" :key="product.productId">
+                                <div class="product-item">
+                                    <span v-if="discountLabel(product.productDiscount)" class="badge bg-success position-absolute m-3">{{ discountLabel(product.productDiscount) }}</span>
+                                    <a href="#" class="btn-wishlist" :class="{'is-active' : product.isFavorited}" @@click.prevent="toggleFavorite(product)">
+                                                            
+                                                 <iconify-icon :key="product.isFavorited" 
+                                                               :icon="product.isFavorited ? 'ph:heart-fill' : 'ph:heart'"
+                                                               :style="{ color: product.isFavorited ? '#ff4d4d' : 'inherit' }"
+                                                               width="24">
+                                                 </iconify-icon>
+                                            </a>
+                                    <figure class="mb-3">
+                                        <a :href="'/Products/Details/' + product.productId" title="Product Title">
+                                            <img :src="product.productImage" :alt="product.productName" class="tab-image">
+                                        </a>
+                                    </figure>
+                                    <h3>{{product.productName }}</h3>
+                                    <span class="qty">{{ product.shopName }}</span>
+                                    <span class="rating">
+                                        <iconify-icon icon="ph:star-fill" style="color:#FFC43F; font-size:16px; vertical-align:-2px;"></iconify-icon>
+                                        {{ product.productRating }}
+                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <del v-if="salePrice(product.productPrice, product.productDiscount)" class="text-muted small">
+                                            NT${{ product.productPrice }}
+                                        </del>
+                                        <span class="price">NT${{ salePrice(product.productPrice, product.productDiscount) || product.productPrice }}</span>
+
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="input-group product-qty">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" @@click.prevent="product.qty = Math.max(1, product.qty - 1)">
+                                                                <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+                                                            </button>
+                                                        </span>
+                                                        <input type="text" class="form-control input-number"
+                                                               v-model.number="product.qty"
+                                                               min="1" :max="product.productQuantity"
+                                                               style="min-width: 40px !important; padding: 2px 4px !important; text-align: center;"
+                                                @@change="product.qty = Math.min(product.productQuantity, Math.max(1, product.qty||1))">                                                        <span class="input-group-btn">
+                                                            <button type="button" class="quantity-right-plus btn btn-success btn-number" @@click.prevent="product.qty = Math.min(product.productQuantity, product.qty + 1)">
+                                                                <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+                                                            </button>
+                                                        </span>
+                                        </div>
+                                        <a href="#" class="btn btn-danger btn-sm w-20 mt-1" @@click.prevent="addCart(product)">加入購物車 <iconify-icon icon="uil:shopping-cart"></a>
+                                    </div>
+                                </div>
+                            <!-- / 單一商品 -->
+                        </div>
+                    </div>
+                    <!-- / products-carousel -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 overflow-hidden">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="section-header d-flex justify-content-between my-5">
+
+                        <h2 class="section-title">推薦商品</h2>
+
+                        <div class="d-flex align-items-center">
+                            <a class="btn-link text-decoration-none" asp-area="" asp-controller="Products" asp-action="Index">查看更多</a>
+                            <div class="swiper-buttons">
+                                <button class="swiper-prev products-carousel2-prev btn btn-primary">❮</button>
+                                <button class="swiper-next products-carousel2-next btn btn-primary">❯</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="products-carousel2 swiper">
+                        <div class="swiper-wrapper">
+
+                            <!-- 單一商品 — 複製此區塊重複使用 -->
+                            <div class="swiper-slide" v-for="product in productsByDiscount" :key="product.productId">
+                                <div class="product-item">
+                                    <span v-if="discountLabel(product.productDiscount)" class="badge bg-success position-absolute m-3">{{ discountLabel(product.productDiscount) }}</span>
+                                    <a href="#" class="btn-wishlist" :class="{'is-active' : product.isFavorited}" @@click.prevent="toggleFavorite(product)">
+                                        <iconify-icon :key="product.isFavorited" 
+                                                      :icon="product.isFavorited ? 'ph:heart-fill' : 'ph:heart'"
+                                                      :style="{ color: product.isFavorited ? '#ff4d4d' : 'inherit' }"
+                                                      width="24">
+                                        </iconify-icon>
+                                    </a>
+                                    <figure class="mb-3">
+                                        <a :href="'/Products/Details/' + product.productId" title="Product Title">
+                                            <img :src="product.productImage" :alt="product.productName" class="tab-image">
+                                        </a>
+                                    </figure>
+                                    <h3>{{product.productName }}</h3>
+                                    <span class="qty">{{ product.shopName }}</span>
+                                    <span class="rating">
+                                        <iconify-icon icon="ph:star-fill" style="color:#FFC43F; font-size:16px; vertical-align:-2px;"></iconify-icon>
+                                        {{ product.productRating }}
+                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <del v-if="salePrice(product.productPrice, product.productDiscount)" class="text-muted small">
+                                            NT${{ product.productPrice }}
+                                        </del>
+                                        <span class="price">NT${{ salePrice(product.productPrice, product.productDiscount) || product.productPrice }}</span>
+
+                                    </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="input-group product-qty">
+                                                            <span class="input-group-btn">
+                                                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" @@click.prevent="product.qty = Math.max(1, product.qty - 1)">
+                                                                    <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+                                                                </button>
+                                                            </span>
+                                                            <input type="text" class="form-control input-number"
+                                                                   v-model.number="product.qty"
+                                                                   min="1" :max="product.productQuantity"
+                                                                   style="min-width: 40px !important; padding: 2px 4px !important; text-align: center;"
+                                                            @@change="product.qty = Math.min(product.productQuantity, Math.max(1, product.qty||1))">                                                            <span class="input-group-btn">
+                                                                <button type="button" class="quantity-right-plus btn btn-success btn-number" @@click.prevent="product.qty = Math.min(product.productQuantity, product.qty + 1)">
+                                                                    <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+                                                                </button>
+                                                            </span>
+                                            </div>
+                                            <a href="#" class="btn btn-danger btn-sm w-20 mt-1" @@click.prevent="addCart(product)">加入購物車 <iconify-icon icon="uil:shopping-cart"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!-- / 單一商品 -->
+                        </div>
+                    </div>
+                    <!-- / products-carousel -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 overflow-hidden">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="section-header d-flex flex-wrap justify-content-between my-5">
+
+                        <h2 class="section-title">新商家推薦</h2>
+
+                        <div class="d-flex align-items-center">
+                            <div class="swiper-buttons">
+                                <button class="swiper-prev brand-carousel-prev btn btn-yellow">❮</button>
+                                <button class="swiper-next brand-carousel-next btn btn-yellow">❯</button>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="brand-carousel swiper">
+                        <div class="swiper-wrapper" >
+                            <!-- 單一店家 — 複製此區塊重複使用 -->
+                              <div class="swiper-slide" v-for="shop in shops" :key="shop.userId">
+                                    <a :href="'/Shop/' + shop.userId" class="card mb-3 p-3 rounded-4 shadow border-0" style="text-decoration:none;">             
+                                    <div class="row g-0 h-100">
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <img :src="shop.shopImg" class=" rounded shop-img" :alt="shop.shopName">
+                                        </div>
+                                            <div class="col-md-8 d-flex">
+                                                <div class="card-body py-0 d-flex flex-column justify-content-center">
+                                                <h5 class="card-title mb-1">{{ shop.shopName }}</h5>
+                                                <p class="text-muted mb-0 shop-desc">{{ shop.shopDescription }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script>
+        const app=Vue.createApp({
+            mixins: [CartMixin],
+
+            data(){
+                return{
+                    shops:[],
+                    productsByRating:[],
+                    productsByDate: [],
+                    productsByDiscount: [],
+                }
+            },
+            methods: {
+                discountLabel(discount) {
+                if (!discount || discount <= 0) return null
+                return `-${Math.round(discount * 100)}%`   // 0.20 → "-20%"
+                },
+                        salePrice(price, discount) {
+                        if (!discount || discount <= 0) return null
+                        return Math.round(price*(1 - discount))  //  100 * (1-0.15) = 85
+                        },
+                async toggleFavorite(product){
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    try {
+                        const response = await fetch('@Url.Action("ToggleFavorite","Products")', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams({ 
+                                productId: product.productId,
+                                __RequestVerificationToken: token
+                            })
+                        });
+                        const res = await response.json();
+
+                        if (res.success) {
+                            // 直接更新物件屬性，Vue 3 會自動感應
+                            product.isFavorited = res.isFavorited;
+            
+                            Swal.fire({
+                            icon: "success",
+                            title: res.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        } else {
+                            Swal.fire({
+                            icon: "warning",
+                            title: "提示",
+                            text: res.message
+                        }).then(() => {
+                            if (res.message.includes("登入")) {
+                                window.location.href = '/Home/Login';
+                            }
+                            });
+                        }
+                    } catch (err) {
+                            console.error("收藏失敗", err);
+                    }
+                }
+            },
+            async mounted() {
+
+                const[rated,newest,discounted,shopRes]= await Promise.all([
+                    fetch('/api/Product/TopRated?take=10').then(r=>r.json()),
+                    fetch('/api/Product/NewArrivals?take=10').then(r=>r.json()),
+                    fetch('/api/Product/TopDiscount?take=10').then(r=>r.json()),
+                    fetch('/api/Shop/Get').then(r=>r.json()),
+                ]);
+                this.productsByRating = rated.map(p=>({...p,qty:1,isFavorited: p.isFavorited || false}));
+                this.productsByDate = newest.map(p=>({...p,qty:1,isFavorited: p.isFavorited || false}));
+                this.productsByDiscount = discounted.map(p=>({...p,qty:1,isFavorited: p.isFavorited || false}));
+                this.shops = shopRes;
+
+
+                this.$nextTick(() => {
+                // 新品上市 — 銷毀再重建
+                const el1 = document.querySelector('.products-carousel')
+                if (el1 && el1.swiper) {
+                el1.swiper.destroy(true, true)
+                }
+                new Swiper('.products-carousel', {
+                loop: false,
+                spaceBetween: 30,
+                speed: 500,
+                navigation: {
+                nextEl: '.products-carousel-next',
+                prevEl: '.products-carousel-prev',
+                },
+                breakpoints: {
+                0:    { slidesPerView: 1 },
+                768:  { slidesPerView: 3 },
+                991:  { slidesPerView: 4 },
+                1200: { slidesPerView: 5 },
+                }
+                })
+
+                // 推薦商品 — 銷毀再重建
+                const el2 = document.querySelector('.products-carousel2')
+                if (el2 && el2.swiper) {
+                el2.swiper.destroy(true, true)
+                }
+                new Swiper('.products-carousel2', {
+                loop: false,
+                spaceBetween: 30,
+                speed: 500,
+                navigation: {
+                nextEl: '.products-carousel2-next',
+                prevEl: '.products-carousel2-prev',
+                },
+                breakpoints: {
+                0:    { slidesPerView: 1 },
+                768:  { slidesPerView: 3 },
+                991:  { slidesPerView: 4 },
+                1200: { slidesPerView: 5 },
+                }
+                })
+                const el3 = document.querySelector('.brand-carousel')
+                if (el3 && el3.swiper) {
+                el3.swiper.destroy(true, true)
+                }
+                new Swiper('.brand-carousel', {
+                loop: false,
+                spaceBetween: 20,
+                speed: 500,
+                navigation: {
+                nextEl: '.brand-carousel-next',
+                prevEl: '.brand-carousel-prev',
+                },
+                breakpoints: {
+                0:    { slidesPerView: 1 },
+                768:  { slidesPerView: 2 },
+                991:  { slidesPerView: 3 },
+                1200: { slidesPerView: 4 },
+                }
+                })
+               })
+            }
+        });
+        app.mount('#product');
+    </script>
+
+
+    @if (TempData["ForgotPasswordMessage"] != null)
+        {
+            <script>
+                Swal.fire({
+                icon: "success",
+                title: @Html.Raw(TempData["ForgotPasswordMessage"]),
+                showConfirmButton: false
+                })
+            </script>
+        }
+    <script>
+        // 檢查是否有來自後端的 ForgotPasswordMessage
+        var forgotPasswordMsg = '@Html.Raw(TempData["ForgotPasswordMessage"])';
+        
+        if (forgotPasswordMsg && forgotPasswordMsg.trim() !== "") {
+        Swal.fire({
+        title: '驗證信已發送！',
+        text: forgotPasswordMsg,
+        icon: 'success',
+        confirmButtonText: '確定',
+        confirmButtonColor: '#3085d6' // 可根據您的主題調整顏色
+        });
+        }
+    </script>
+
+    <script>
+        // 檢查是否有來自後端的 SuccessMessage
+        var successMsg = '@Html.Raw(TempData["SuccessMessage"])';
+        
+        if (successMsg && successMsg.trim() !== "") {
+        Swal.fire({
+        title: '註冊成功！',
+        text: successMsg,
+        icon: 'success',
+        confirmButtonText: '確定',
+        confirmButtonColor: '#3085d6' // 可根據您的主題調整顏色
+        });
+        }
+    </script>
+}

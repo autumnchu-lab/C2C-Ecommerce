@@ -1,0 +1,703 @@
+﻿using AspNetCoreGeneratedDocument;
+using Bake.Areas.Seller.Model;
+using Bake.Areas.Seller.ViewModels;
+using Bake.Data;
+using Bake.Models.Platform;
+using Bake.Models.Sales;
+using Bake.Models.User;
+using Humanizer;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Bake.Enum;
+using BuyerOrderListViewModel = Bake.Areas.Seller.ViewModels.BuyerOrderListViewModel;
+
+namespace Bake.Areas.Seller.Controllers
+{
+    [Area("Seller")]
+    public class MeController : Controller
+    {
+        private readonly BakeContext _context;
+        
+        private readonly IWebHostEnvironment _env;
+        public MeController(BakeContext context, IWebHostEnvironment env)
+        {
+            _context = context;
+            _env = env;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
+        {
+            int? userId = GetCurrentUserIdFromClaim();
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Home", new { area = "" });
+            }
+
+            var user = await _context.AccountAuths
+                .AsNoTracking()
+                .Include(x => x.UserProfile)
+                .FirstOrDefaultAsync(x => x.UserId == userId.Value);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home", new { area = "" });
+            }
+
+            var now = DateTime.Now;
+            const string defaultCardImage = "seller_assets/images/cards/card-style-6/card-1.jpg";
+
+            var myPosts = await _context.Posts
+                .AsNoTracking()
+                .Where(p => p.AuthorId == userId.Value
+                         && p.TypeId == 0
+                         && p.IsPublished == true)
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new MemberDashboardPostCardViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    CreatedAt = p.CreatedAt,
+                    ImageUrl =
+                        p.PostAttachments
+                            .Where(a => a.IsCover == true)
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? p.PostAttachments
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? defaultCardImage,
+                    LikesCount = p.PostLikes.Count(),
+                    CommentsCount = p.PostComments.Count()
+                })
+                .Take(10)
+                .ToListAsync();
+
+            var activeHostedEvents = await _context.Posts
+                .AsNoTracking()
+                .Where(p => p.AuthorId == userId.Value
+                         && p.TypeId == 1
+                         && p.IsPublished == true
+                         && p.EventDetails.Any(e => e.EventEndTime >= now))
+                .Select(p => new MemberDashboardEventCardViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    EventTime = p.EventDetails
+                        .OrderBy(e => e.EventTime)
+                        .Select(e => (DateTime?)e.EventTime)
+                        .FirstOrDefault(),
+                    ImageUrl =
+                        p.PostAttachments
+                            .Where(a => a.IsCover == true)
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? p.PostAttachments
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? defaultCardImage,
+                    LikesCount = p.PostLikes.Count()
+                })
+                .OrderBy(x => x.EventTime)
+                .Take(10) //先抓前十筆
+                .ToListAsync();
+
+            var pastHostedEvents = await _context.Posts
+                .AsNoTracking()
+                .Where(p => p.AuthorId == userId.Value
+                         && p.TypeId == 1
+                         && (p.IsPublished != true || p.EventDetails.Any(e => e.EventEndTime < now)))
+                .Select(p => new MemberDashboardEventCardViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    EventTime = p.EventDetails
+                        .OrderByDescending(e => e.EventTime)
+                        .Select(e => (DateTime?)e.EventTime)
+                        .FirstOrDefault(),
+                    ImageUrl =
+                        p.PostAttachments
+                            .Where(a => a.IsCover == true)
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? p.PostAttachments
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? defaultCardImage,
+                    LikesCount = p.PostLikes.Count()
+                })
+                .OrderByDescending(x => x.EventTime)
+                .Take(10)
+                .ToListAsync();
+
+            var activeEvents = await _context.Posts
+                .AsNoTracking()
+                .Where(p => p.IsPublished == true
+                         && p.TypeId == 1
+                         && p.AuthorId != userId.Value
+                         && p.EventDetails.Any(e =>
+                                e.EventEndTime >= now &&
+                                e.EventRegistrations.Any(r => r.UserId == userId.Value && r.RegistStatusId == 1)))
+                .Select(p => new MemberDashboardEventCardViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    EventTime = p.EventDetails
+                        .OrderBy(e => e.EventTime)
+                        .Select(e => (DateTime?)e.EventTime)
+                        .FirstOrDefault(),
+                    ImageUrl =
+                        p.PostAttachments
+                            .Where(a => a.IsCover == true)
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? p.PostAttachments
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? defaultCardImage,
+                    LikesCount = p.PostLikes.Count()
+                })
+                .OrderBy(x => x.EventTime)
+                .Take(10)
+                .ToListAsync();
+
+            var pastActiveEvents = await _context.Posts
+                .AsNoTracking()
+                .Where(p => p.IsPublished == true
+                         && p.TypeId == 1
+                         && p.AuthorId != userId.Value
+                         && p.EventDetails.Any(e =>
+                                e.EventEndTime < now &&
+                                e.EventRegistrations.Any(r => r.UserId == userId.Value && r.RegistStatusId == 1)))
+                .Select(p => new MemberDashboardEventCardViewModel
+                {
+                    PostId = p.PostId,
+                    Title = p.Title,
+                    EventTime = p.EventDetails
+                        .OrderByDescending(e => e.EventTime)
+                        .Select(e => (DateTime?)e.EventTime)
+                        .FirstOrDefault(),
+                    ImageUrl =
+                        p.PostAttachments
+                            .Where(a => a.IsCover == true)
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? p.PostAttachments
+                            .OrderBy(a => a.SortOrder)
+                            .Select(a => a.FileUrl)
+                            .FirstOrDefault()
+                        ?? defaultCardImage,
+                    LikesCount = p.PostLikes.Count()
+                })
+                .OrderByDescending(x => x.EventTime)
+                .Take(10)
+                .ToListAsync();
+
+            var vm = new MemberDashboardViewModel
+            {
+                UserId = user.UserId,
+                FullName = user.UserProfile.FullName,
+                IsEmailConfirmed = user.IsEmailConfirmed,
+                AvatarUrl = user.UserProfile?.AvatarUrl,
+                Bio= user.UserProfile?.Bio,
+
+                PostCount = await _context.Posts
+                    .AsNoTracking()
+                    .CountAsync(p => p.AuthorId == user.UserId
+                                  && p.TypeId == 0
+                                  && p.IsPublished == true),
+
+                FollowersCount = await _context.Follows
+                    .AsNoTracking()
+                    .CountAsync(f => f.BefollowedId == user.UserId),
+
+                FollowingCount = await _context.Follows
+                    .AsNoTracking()
+                    .CountAsync(f => f.FollowerId == user.UserId),
+
+                MyPosts = myPosts,
+                ActiveHostedEvents = activeHostedEvents,
+                PastHostedEvents = pastHostedEvents,
+
+                ActiveEvents = activeEvents,
+                PastActiveEvents = pastActiveEvents
+            };
+
+            return View(vm);
+        }
+
+        private int? GetCurrentUserIdFromClaim()
+        {
+            string? userIdClaim = User.FindFirstValue("UserId");
+
+            if (!int.TryParse(userIdClaim, out int userId))
+            {
+                return null;
+            }
+
+            return userId;
+        }
+
+        private async Task<string?> SaveAvatarImageAsync(IFormFile file)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            string extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                return null;
+            }
+
+            string folderPath = Path.Combine(_env.WebRootPath, "ProfilePicture", "User");
+            Directory.CreateDirectory(folderPath);
+
+            string fileName = $"{Guid.NewGuid()}{extension}";
+            string fullPath = Path.Combine(folderPath, fileName);
+
+            await using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return $"ProfilePicture/User/{fileName}";
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetProfileEditJson()
+        {
+            int? userId = GetCurrentUserIdFromClaim();
+
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "請重新登入" });
+            }
+
+            var user = await _context.AccountAuths
+                .AsNoTracking()
+                .Include(x => x.UserProfile)
+                .FirstOrDefaultAsync(x => x.UserId == userId.Value);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "找不到會員資料" });
+            }
+
+            var genderOptions = await _context.UserGenderStatusDefinitions
+                .AsNoTracking()
+                .OrderBy(x => x.StatusId)
+                .Select(x => new
+                {
+                    value = x.StatusId,
+                    text = x.StatusName
+                })
+                .ToListAsync();
+
+            string avatarUrl = !string.IsNullOrWhiteSpace(user.UserProfile?.AvatarUrl)
+                ? (user.UserProfile.AvatarUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                    ? user.UserProfile.AvatarUrl
+                    : Url.Content("~/" + user.UserProfile.AvatarUrl.TrimStart('/')))
+                : Url.Content("~/seller_assets/images/profile/NoImage.png");
+
+            return Json(new
+            {
+                success = true,
+                data = new
+                {
+                    userName = user.UserName,
+                    fullName = user.UserProfile?.FullName ?? user.UserName,
+                    bio = user.UserProfile?.Bio ?? "",
+                    avatarUrl = avatarUrl,
+                    persona = user.UserProfile?.Persona,
+                    phone = user.UserProfile?.UserPhone,
+                    gender = user.UserProfile?.UserGender
+                }
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> UpdateProfileJson(MemberDashboardEditViewModel vm)
+        {
+            int? userId = GetCurrentUserIdFromClaim();
+
+            var user = await _context.AccountAuths
+                .Include(x => x.UserProfile)
+                .FirstOrDefaultAsync(x => x.UserId == userId.Value);
+
+            string avatarUrl = !string.IsNullOrWhiteSpace(user.UserProfile?.AvatarUrl)
+                ? (user.UserProfile.AvatarUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                    ? user.UserProfile.AvatarUrl
+                    : Url.Content("~/" + user.UserProfile.AvatarUrl.TrimStart('/')))
+                : Url.Content("~/seller_assets/images/profile/NoImage.png");
+
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "請重新登入" });
+            }
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "找不到會員資料" });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => string.IsNullOrWhiteSpace(e.ErrorMessage) ? "資料格式不正確" : e.ErrorMessage)
+                    .ToList();
+
+                return Json(new { success = false, errors = errors });
+            }
+
+            user.UserName = vm.FullName.Trim();
+
+            if (user.UserProfile != null)
+            {
+                user.UserProfile = new UserProfile
+                {
+                    
+                    FullName = vm.FullName.Trim(),
+                    Persona = vm.Persona,
+                    UserGender = vm.Gender,
+                    UserPhone = vm.Phone,
+                    AvatarUrl = avatarUrl,
+                    Bio = string.IsNullOrWhiteSpace(vm.Bio) ? null : vm.Bio.Trim(),
+
+                };
+
+                _context.UserProfiles.Update(user.UserProfile);
+            }
+            
+
+            if (vm.AvatarFile != null && vm.AvatarFile.Length > 0)
+            {
+                string? avatarPath = await SaveAvatarImageAsync(vm.AvatarFile);
+
+                if (avatarPath == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        errors = new[] { "只允許上傳 jpg、jpeg、png 圖片" }
+                    });
+                }
+
+                user.UserProfile!.AvatarUrl = avatarPath;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["ProfileMessage"] = "個人資料已變更！";
+
+            return Json(new { success = true, message = "會員資料已更新" });
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Favorites(int page = 1, bool isAjax = false)
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+            var currentUserId = int.Parse(userId);
+            var allSave = _context.PostFavorites.Where(u => u.UserId == currentUserId);
+            int totalCount = await allSave.CountAsync();
+            int pageSize = 3;
+            var viewModel = new FavoritePostViewModel {
+                MySavePosts = await _context.PostFavorites
+                              .Include(p => p.Post.PostAttachments)
+                              .AsNoTracking()
+                              .Where(u => u.UserId == currentUserId)
+                              .Skip((page - 1) * pageSize)
+                              .Take(pageSize)
+                              
+                              .Select(s => s.Post)
+                              
+                              .ToListAsync(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                SavedCount = totalCount,
+                MyFollowers = await _context.Follows
+                              .AsNoTracking()   
+                              .Where(u => u.BefollowedId == currentUserId)
+                              .Select(s => s.Follower)
+                              .ToListAsync()
+            };
+            if (isAjax)
+            {
+                return PartialView("_FavoritesPartial", viewModel);
+            }
+
+            return View(viewModel);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Orders(int pageNumber = 1, bool isAjax = false)
+        {
+            int pageSize = 10;
+            var userId = User.FindFirst("UserId")?.Value;
+            //避免他人抓到別人的訂單
+            if (!int.TryParse(userId, out var currentUserId)) return RedirectToAction("Login", "Home", new { area = "" });
+
+            var reviewedSet = (await _context.ProductReviews
+            .Where(r => r.UserId == currentUserId)
+            .Select(r => $"{r.OrderId}_{r.ProductId}")
+            .ToListAsync())
+            .ToHashSet(); //不重複抓取
+
+            var query = _context.OrderItems
+                .Where(x => x.Order.UserId == int.Parse(userId))
+                .GroupBy(o => o.OrderId);
+
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var orderList = await query
+                .OrderByDescending(g => g.Key)
+                .Skip((pageNumber -1) * pageSize)
+                .Take(pageSize)
+                .Select(g => new BuyerOrderListViewModel
+                {
+                    OrderId = g.Key,
+                    // 取分組中第一筆的訂單共用資訊
+                    ShippingAddress = g.First().Order.ShippingAddress,
+                    TotalAmount = g.First().Order.TotalAmount,
+                    PaymentMethod = g.First().Order.PaymentMethod.Name,
+                    CreatedAt = g.First().Order.CreatedAt,
+                    StatusName = g.First().Order.Status.StatusName,
+                    StatusId = g.First().Order.StatusId,// 評論需要
+                    ProductsList = g.First().Order.OrderItems.Select(oi => new Item
+                    {
+                        ProductId = oi.ProductId, // 評論需要
+                        ProductName = oi.Product.ProductName, // 從訂單項目關聯到產品名稱
+                        Quantity = oi.ItemQuantity,
+                        IsReviewed = false, 
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            foreach (var order in orderList) // 評論需要 不能寫裡面因為SQL讀不到
+            {
+                foreach (var item in order.ProductsList)
+                {
+                    item.IsReviewed = reviewedSet.Contains($"{order.OrderId}_{item.ProductId}");
+                    item.CanReview = order.StatusId != (byte)OrderStatusEnum.Unpaid     // 不是未付款
+                                  && order.StatusId != (byte)OrderStatusEnum.Cancelled  // 不是已取消
+                                  && !item.IsReviewed;                                  // 還沒評論
+                }
+            }
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+
+            if (isAjax)
+            {
+                return PartialView("_BuyerOrderTablePartial", orderList);
+            }
+
+            return View(orderList);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Settings()
+        {
+            string userAccount = User.Identity.Name ;
+            if (string.IsNullOrEmpty(userAccount)) return RedirectToAction("Login", "Home");
+            
+            var user = _context.AccountAuths.FirstOrDefault(c=>c.Email == userAccount);
+            if (user == null) return NotFound();
+
+            var ViewModel = new SettingsViewModel
+            {
+                Name = user.UserName,
+                Email = user.Email
+            };
+            
+            return View(ViewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Settings(SettingsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _context.AccountAuths.FirstOrDefaultAsync(c => c.Email == model.Email);
+            if( user == null )
+            {
+                return NotFound();
+            }
+            user.UserName = model.Name;
+            user.Email = model.Email;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            
+            _context.SaveChanges();
+            TempData["SettingMessage"] = "已完成更改";
+            return RedirectToAction("Dashboard","Me", new {area = "Seller"});
+        }
+
+        public IActionResult Profile()
+        {
+            return View();
+        }
+        
+        public async Task<IActionResult> ResetPassword(string email)
+        {
+            var model = await _context.AccountAuths.Select(m => new ReSetPasswordModel
+            {
+                Email = m.Email
+                
+            }).FirstOrDefaultAsync(m=>m.Email == email);
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ResetPassword(ReSetPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if(model.Password == model.ConfirmPassword)
+                {
+
+                    var email = TempData["ResetEmail"] as string;
+                    var user = _context.AccountAuths.FirstOrDefault(a=>a.Email == email);
+                    if(user != null)
+                    {
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+                        _context.AccountAuths.Update(user);
+                        _context.SaveChanges();
+                        return RedirectToAction("Login", "Home", new { area = "" });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "找不到該帳號。");
+                    }
+                }
+            }
+            return View(model);
+        }
+        
+        public IActionResult Verify_email()
+        {
+            return View();
+        }
+        public IActionResult SwitchSeller()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SwitchSellerAsync(BankAccountModel model )
+        {
+            if (!ModelState.IsValid)   return View(model);
+            
+            var userId = User.FindFirstValue("UserId");
+            var users = await _context.AccountAuths.FindAsync(int.Parse(userId));
+            using(SHA256 sha256  = SHA256.Create())
+            {
+                byte[] InputAccount = Encoding.UTF8.GetBytes(model.BankAccount);
+                byte[] HashAccount = sha256.ComputeHash(InputAccount);
+
+                var newSeller = new UserPaymentSecret
+                {
+                    UserId = int.Parse(userId),
+                    EncryptedBankAcc = HashAccount
+                };
+
+                _context.UserPaymentSecrets.Add(newSeller);
+                
+                users.IsSeller = true;
+                users.Role = 1;
+                await _context.SaveChangesAsync();
+
+                _context.Shops.Add(new Shop
+                {
+                    UserId = newSeller.UserId,
+                    ShopName = users.UserName + "的店鋪",
+                    SellerApprovedAt = DateTime.Now,
+                    StatusId = 0,
+                });
+                await _context.SaveChangesAsync();
+            }
+            
+
+
+            var claims = new List<Claim>
+            {
+                new Claim("UserId", userId),
+                new Claim(ClaimTypes.Name, User.Identity.Name),
+                new Claim(ClaimTypes.Role, "Seller")  // 動態新增賣家身分
+
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // 3. 關鍵：執行 SignInAsync，這會覆蓋舊的 Cookie，讓權限立即生效
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+            TempData["SellerMessage"] = "已成為賣家，可以前往商店設定！";
+
+            return RedirectToAction("Dashboard", "Me", new { area="Seller"});
+            
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult BankAccountChange()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BankAccountChangeAsync(BankAccountChangeModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+            var userId = User.FindFirstValue("UserId");
+            var users = await _context.AccountAuths.Include(a=>a.UserPaymentSecret).FirstOrDefaultAsync(a=>a.UserId == int.Parse(userId));
+            
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] InputAccount = Encoding.UTF8.GetBytes(model.BankAccount);
+                byte[] HashAccount = sha256.ComputeHash(InputAccount);
+                users.UserPaymentSecret.EncryptedBankAcc = HashAccount;
+                _context.UserPaymentSecrets.Update(users.UserPaymentSecret);
+                await _context.SaveChangesAsync();
+            }
+            TempData["BankAccountChangeMessage"] = "已成功變更銀行帳戶！";
+            return RedirectToAction("Dashboard", "Me", new { area = "Seller" });
+        }
+    }
+}
+
+
+
+

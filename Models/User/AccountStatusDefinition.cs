@@ -1,0 +1,14 @@
+﻿using Bake.Models.User;
+using System;
+using System.Collections.Generic;
+
+namespace Bake.Models;
+
+public partial class AccountStatusDefinition
+{
+    public byte StatusId { get; set; }
+
+    public string StatusName { get; set; } = null!;
+
+    public virtual ICollection<AccountAuth> AccountAuths { get; set; } = new List<AccountAuth>();
+}

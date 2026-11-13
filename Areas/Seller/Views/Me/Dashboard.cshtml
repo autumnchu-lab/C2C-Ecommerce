@@ -1,0 +1,525 @@
+﻿@model Bake.Areas.Seller.ViewModels.MemberDashboardViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/userDashboard.css" />
+}
+@{
+    ViewBag.Title = "會員資料";
+    
+    // 替代圖片
+    string avatarUrl = !string.IsNullOrWhiteSpace(Model.AvatarUrl)
+    ? (Model.AvatarUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+        ? Model.AvatarUrl
+        : Url.Content("~/" + Model.AvatarUrl.TrimStart('/')))
+    : Url.Content("~/seller_assets/images/profile/NoImage.png");
+
+    string aboutText = !string.IsNullOrWhiteSpace(Model.Bio)
+        ? Model.Bio
+        : "目前尚未填寫個人介紹";
+}
+    <!-- ========== section start ========== -->
+    <section class="section">
+        <div class="container-fluid">
+            <!-- ========== title-wrapper start ========== -->
+            <div class="title-wrapper pt-30">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="title">
+                            <h2>個人檔案</h2>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- ========== title-wrapper end ========== -->
+
+            <div class="row">
+                <div class="col-xxl-12">
+                    <div class="profile-wrapper mb-30">
+                        <div class="profile-cover">
+                            <img src="~/seller_assets/images/profile/profile-cover.jpg" alt="cover-image" />
+                            @* <div class="update-image">
+                                <input type="file" />
+                                <label for="">
+                                    <i class="lni lni-camera"></i> 編輯背景圖片
+                                </label>
+                            </div> *@
+                        </div>
+                        <div class="d-md-flex">
+                            <div class="profile-photo">
+                                <div class="image">
+                                    @* <img src="~/seller_assets/images/profile/profile-image.png" alt="profile" /> *@
+                                    <img src="@avatarUrl" alt="profile" />
+                                    @* <div class="update-image">
+                                        <input type="file" />
+                                        <label for=""><i class="lni lni-camera"></i></label>
+                                    </div> *@
+                                </div>
+                                <div class="profile-meta pt-25">
+                                    @* <h5 class="text-bold mb-10">John Doe</h5> *@
+                                    <h5 class="text-bold mb-10">@Model.FullName</h5>
+                                    @* <p class="text-sm">Founder, Abc Company</p> *@
+                                    @* <p class="text-sm">@profileTitle</p> 找不到這個欄位*@
+                                </div>
+                            </div>
+                            <div class="profiles-activities w-100 pt-30">
+                                <ul class="d-flex align-items-center">
+                                    <li class="mr-30">
+                                        <p><strong>@Model.PostCount</strong><br></>貼文</p>
+                                    </li>
+                                    <li class="mr-30">
+                                        <p><strong>@Model.FollowersCount</strong><br></>粉絲</p>
+                                    </li>
+                                    <li class="mr-30">
+                                        <p><strong>@Model.FollowingCount</strong><br></>關注</p>
+                                    </li>
+                                    @* <li class="mr-30">
+                                        <p><strong>@Model.PostCount</strong><br />貼文</p>
+                                    </li>
+                                    <li class="mr-30">
+                                        <p><strong>@Model.FollowersCount</strong><br />粉絲</p>
+                                    </li>
+                                    <li class="mr-30">
+                                        <p><strong>@Model.FollowingCount</strong><br />關注</p>
+                                    </li> *@
+                                    <li class="ms-auto">
+                                        <button type="button"
+                                                id="openProfileEditModal"
+                                                class="main-btn primary-btn btn-hover btn-sm">
+                                            <i class="lni lni-pencil-alt mr-10"></i>
+                                            編輯個人資料
+                                        </button>
+                                    </li>
+                                    @* <li class="ms-auto">
+                                        <div class="more-btn-wrapper">
+                                            <button class="more-btn dropdown-toggle" id="moreAction" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                <i class="lni lni-more-alt"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="moreAction">
+                                                <li class="dropdown-item">
+                                                    <a href="#0" class="text-gray">Add All</a>
+                                                </li>
+                                                <li class="dropdown-item">
+                                                    <a href="#0" class="text-gray">Remove All</a>
+                                                </li> 
+                                            </ul>
+                                        </div>
+                                    </li>*@
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h5 class="text-bold mb-15">關於我</h5>
+                            <p class="text-sm mb-30">
+                                @aboutText
+                                @* <a href="#0" class="text-medium text-dark">[Read More]</a> *@
+                            </p>
+
+                            @* <ul class="socials">  //要做再加回來
+                                <li>
+                                    <a href="#0"><i class="lni lni-facebook-fill"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#0"><i class="lni lni-twitter-fill"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#0"><i class="lni lni-instagram-fill"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#0"><i class="lni lni-behance-original"></i></a>
+                                </li>
+                            </ul> *@
+                        </div>
+                    </div>
+                    <!-- end card -->
+                    <div class="card-style mb-30">
+                        <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                            <h6 class="mb-20">我的貼文</h6>
+                            <div class="d-flex align-items-center mb-20">
+                                <button class="swiper-prev posts-prev btn btn-sm">❮</button>
+                                <button class="swiper-next posts-next btn btn-sm">❯</button>
+                            </div>
+                        </div>
+
+                        @if (Model.MyPosts.Any())
+                        {
+                            <div class="swiper posts-carousel overflow-hidden">
+                                <div class="swiper-wrapper">
+                                    @foreach (var item in Model.MyPosts)
+                                    {
+                                        <partial name="_DashboardPostCardPartial" model="item" />
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-history-block">
+                                目前還沒有貼文
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-style mb-30">
+                        <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                            <h6 class="mb-20">發起的活動</h6>
+                            <div class="d-flex align-items-center mb-20">
+                                <button class="swiper-prev initiated-prev btn btn-sm">❮</button>
+                                <button class="swiper-next initiated-next btn btn-sm">❯</button>
+                            </div>
+                        </div>
+
+                        @if (Model.ActiveHostedEvents.Any())
+                        {
+                            <div class="swiper initiated-carousel overflow-hidden">
+                                <div class="swiper-wrapper">
+                                    @foreach (var item in Model.ActiveHostedEvents)
+                                    {
+                                        <partial name="_DashboardEventCardPartial" model="item" />
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-history-block">
+                                目前沒有進行中的活動
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-style mb-30">
+                        <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                            <h6 class="mb-20">發起過的活動</h6>
+                            <div class="d-flex align-items-center mb-20">
+                                <button class="swiper-prev past-initiated-prev btn btn-sm">❮</button>
+                                <button class="swiper-next past-initiated-next btn btn-sm">❯</button>
+                            </div>
+                        </div>
+
+                        @if (Model.PastHostedEvents.Any())
+                        {
+                            <div class="swiper past-initiated-carousel overflow-hidden">
+                                <div class="swiper-wrapper">
+                                    @foreach (var item in Model.PastHostedEvents)
+                                    {
+                                        <partial name="_DashboardEventCardPartial" model="item" />
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="empty-history-block">
+                                目前沒有歷史活動
+                            </div>
+                        }
+                    </div>
+
+                <div class="card-style mb-30">
+                    <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                        <h6 class="mb-20">參加中的活動</h6>
+                        <div class="d-flex align-items-center mb-20">
+                            <button class="swiper-prev initiated-prev btn btn-sm">❮</button>
+                            <button class="swiper-next initiated-next btn btn-sm">❯</button>
+                        </div>
+                    </div>
+
+                    @if (Model.ActiveEvents.Any())
+                    {
+                        <div class="swiper initiated-carousel overflow-hidden">
+                            <div class="swiper-wrapper">
+                                @foreach (var item in Model.ActiveEvents)
+                                {
+                                    <partial name="_DashboardEventCardPartial" model="item" />
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-history-block">
+                            目前沒有參加中的活動
+                        </div>
+                    }
+                </div>
+
+                <div class="card-style mb-30">
+                    <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                        <h6 class="mb-20">曾參加過的活動</h6>
+                        <div class="d-flex align-items-center mb-20">
+                            <button class="swiper-prev initiated-prev btn btn-sm">❮</button>
+                            <button class="swiper-next initiated-next btn btn-sm">❯</button>
+                        </div>
+                    </div>
+
+                    @if (Model.PastActiveEvents.Any())
+                    {
+                        <div class="swiper initiated-carousel overflow-hidden">
+                            <div class="swiper-wrapper">
+                                @foreach (var item in Model.PastActiveEvents)
+                                {
+                                    <partial name="_DashboardEventCardPartial" model="item" />
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-history-block">
+                            目前沒有曾參加過的活動
+                        </div>
+                    }
+                </div>
+
+            <!-- end col -->
+        </div>
+    </div>
+</section>
+<!-- Bootstrap編輯的modal畫面 -->
+    <div class="modal fade" id="profileEditModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">編輯個人資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="profileEditErrors" class="alert alert-danger d-none"></div>
+
+                    <form id="profileEditForm" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <img id="editAvatarPreview"
+                                         src="~/seller_assets/images/profile/NoImage.png"
+                                         alt="頭像預覽"
+                                         style="width:100%; max-width:220px; border-radius:16px; object-fit:cover;" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">頭像</label>
+                                    <input type="file"
+                                           id="editAvatarFile"
+                                           name="AvatarFile"
+                                           class="form-control"
+                                           accept=".jpg,.jpeg,.png" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+
+                                <div class="mb-3">
+                                    <label class="form-label">姓名</label>
+                                    <input type="text" id="editFullName" name="FullName" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">暱稱</label>
+                                    <input type="text" id="editPersona" name="Persona" class="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">性別</label>
+                                    <select class="form-select" id="editGender" name="Gender" >
+                                        <option class="form-options" value="0">男</option>
+                                        <option class="form-options" value="1">女</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">電話</label>
+                                    <input type="text" id="editPhone" name="Phone" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">個人介紹</label>
+                                    <textarea id="editBio" name="Bio" class="form-control" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" id="saveProfileBtn" class="btn btn-primary">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- modal的JS資料弄進去 -->
+
+@section Scripts {
+    
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData["SettingMessage"] != null)
+    {
+	    <script>
+		    Swal.fire({
+		    icon: "success",
+		    title: '@Html.Raw(TempData["SettingMessage"])',
+		    showConfirmButton: false,
+		    timer: 1500
+		    });
+	    </script>			
+    }
+    @if (TempData["SellerMessage"] != null)
+    {
+	    <script>
+		    Swal.fire({
+		    icon: "success",
+		    title: '@Html.Raw(TempData["SellerMessage"])',
+		    showConfirmButton: false,
+		    timer: 1500
+		    });
+	    </script>			
+    }
+    @if (TempData["BankAccountChangeMessage"] != null)
+    {
+	    <script>
+		    Swal.fire({
+		    icon: "success",
+		    title: '@Html.Raw(TempData["BankAccountChangeMessage"])',
+		    showConfirmButton: false,
+		    timer: 1500
+		    });
+	    </script>			
+    }
+        @if (TempData["ProfileMessage"] != null)
+        {
+            <script>
+                Swal.fire({
+                icon: "success",
+                title: '@Html.Raw(TempData["ProfileMessage"])',
+                showConfirmButton: false,
+                timer: 1500
+                });
+            </script>
+        }
+
+    
+    <script>
+        $(function () {
+
+            // ===== Swiper 初始化 =====
+            function initProfileSwipers() {
+                const defaultBreak = {
+                    0:    { slidesPerView: 1, spaceBetween: 12 },
+                    768:  { slidesPerView: 2, spaceBetween: 16 },
+                    992:  { slidesPerView: 3, spaceBetween: 20 },
+                    1200: { slidesPerView: 4, spaceBetween: 20 },
+                    1600: { slidesPerView: 5, spaceBetween: 24 },
+                };
+
+                const configs = [
+                    { sel: '.posts-carousel',          prev: '.posts-prev',          next: '.posts-next' },
+                    { sel: '.initiated-carousel',      prev: '.initiated-prev',      next: '.initiated-next' },
+                    { sel: '.past-initiated-carousel', prev: '.past-initiated-prev', next: '.past-initiated-next' },
+                ];
+
+                configs.forEach(function (cfg) {
+                    const el = document.querySelector(cfg.sel);
+                    if (!el) return;
+                    if (el.swiper) el.swiper.destroy(true, true);
+
+                    new Swiper(cfg.sel, {
+                        speed: 500,
+                        breakpoints: defaultBreak,
+                        navigation: {
+                            prevEl: cfg.prev,
+                            nextEl: cfg.next,
+                        },
+                    });
+                });
+            }
+
+            initProfileSwipers();
+
+            // ===== 以下為 Modal 編輯功能 =====
+
+            $("#openProfileEditModal").on("click", function () {
+                $("#profileEditErrors").addClass("d-none").empty();
+
+                $.get('@Url.Action("GetProfileEditJson", "Me", new { area = "Seller" })', function (res) {
+                    if (!res.success) {
+                        alert(res.message || "讀取資料失敗");
+                        return;
+                    }
+
+                    const data = res.data;
+
+                    $("#editFullName").val(data.fullName);
+                    $("#editGender").val(data.gender);
+                    $("#editPhone").val(data.phone);
+                    $("#editPersona").val(data.persona);
+                    $("#editBio").val(data.bio);
+                    $("#editAvatarPreview").attr("src", data.avatarUrl);
+                    $("#editAvatarFile").val("");
+
+                    $("#profileEditModal").modal("show");
+                }).fail(function () {
+                    alert("讀取資料失敗，請稍後再試");
+                });
+            });
+
+            $("#editAvatarFile").on("change", function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#editAvatarPreview").attr("src", e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            $("#saveProfileBtn").on("click", function () {
+                $("#profileEditErrors").addClass("d-none").empty();
+
+                const form = $("#profileEditForm")[0];
+                const formData = new FormData(form); //配合傳圖
+
+                $.ajax({
+                    url: '@Url.Action("UpdateProfileJson", "Me", new { area = "Seller" })',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        if (res.success) {
+                            $("#profileEditModal").modal("hide");
+                            location.reload();
+                            return;
+                        }
+
+                        let messages = [];
+
+                        if (res.errors && res.errors.length > 0) {
+                            messages = res.errors;
+                        } else if (res.message) {
+                            messages = [res.message];
+                        } else {
+                            messages = ["儲存失敗"];
+                        }
+
+                        let html = "<ul class='mb-0'>";
+                        $.each(messages, function (index, msg) {
+                            html += `<li>${msg}</li>`;
+                        });
+                        html += "</ul>";
+
+                        $("#profileEditErrors").html(html).removeClass("d-none");
+                    },
+                    error: function () {
+                        $("#profileEditErrors")
+                            .html("<ul class='mb-0'><li>系統忙碌中，請稍後再試</li></ul>")
+                            .removeClass("d-none");
+                    }
+                });
+            });
+
+        });
+    </script>
+}

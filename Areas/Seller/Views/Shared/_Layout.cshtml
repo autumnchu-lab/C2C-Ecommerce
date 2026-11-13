@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon" />
+    <title>@ViewData["Title"] </title>
+
+    <!-- ========== All CSS files linkup ========= -->
+    <link rel="stylesheet" href="~/seller_assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/lineicons.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/quill/bubble.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/quill/snow.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/fullcalendar.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/morris.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/datatable.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/main.css" />
+    <link rel="stylesheet" href="~/seller_assets/css/sweetstack-admin-override.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- ========== All JQuery files linkup ========= -->
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+            <symbol xmlns="http://www.w3.org/2000/svg" id="user" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M15.71 12.71a6 6 0 1 0-7.42 0a10 10 0 0 0-6.22 8.18a1 1 0 0 0 2 .22a8 8 0 0 1 15.9 0a1 1 0 0 0 1 .89h.11a1 1 0 0 0 .88-1.1a10 10 0 0 0-6.25-8.19ZM12 12a4 4 0 1 1 4-4a4 4 0 0 1-4 4Z" />
+            </symbol>
+            <symbol xmlns="http://www.w3.org/2000/svg" id="close" viewBox="0 0 15 15">
+                <path fill="currentColor" d="M7.953 3.788a.5.5 0 0 0-.906 0L6.08 5.85l-2.154.33a.5.5 0 0 0-.283.843l1.574 1.613l-.373 2.284a.5.5 0 0 0 .736.518l1.92-1.063l1.921 1.063a.5.5 0 0 0 .736-.519l-.373-2.283l1.574-1.613a.5.5 0 0 0-.283-.844L8.921 5.85l-.968-2.062Z" />
+                <symbol xmlns="http://www.w3.org/2000/svg" id="bell" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19.29 17.29L18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-1.29 1.29c-.63.63-.19 1.71.7 1.71h13.17c.9 0 1.34-1.08.71-1.71M16 17H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5zm-4 5c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2" />
+                </symbol>
+
+                <symbol xmlns="http://www.w3.org/2000/svg" id="message" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M20 4v12H5.17L4 17.17V4zm0-2H4c-1.1 0-2 .9-2 2v15.59c0 .89 1.08 1.34 1.71.71L6 18h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2" />
+                </symbol>
+            </symbol>
+        </defs>
+    </svg>
+    <!-- ======== Preloader =========== -->
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+    <!-- ======== Preloader =========== -->
+    <!-- ======== sidebar-nav start =========== -->
+    <aside class="sidebar-nav-wrapper">
+        <div class="navbar-logo">
+            <a asp-area="" asp-controller="Home" asp-action="index">
+                <img src="~/ProductPicture/brand/Logo.png" alt="SweetStack" style="width: 150px; height: auto;" asp-append-version="true" />
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item active">
+                    <a asp-area="Seller" asp-controller="Me" asp-action="Dashboard">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3.33334 11.6667C3.33334 10.7462 4.07954 10 5.00001 10H15C15.9205 10 16.6667 10.7462 16.6667 11.6667C16.6667 15.3486 13.6819 18.3333 10 18.3333C6.31811 18.3333 3.33334 15.3486 3.33334 11.6667Z" />
+                                <path d="M13.3333 4.99999C13.3333 6.84094 11.8409 8.33332 9.99999 8.33332C8.15904 8.33332 6.66666 6.84094 6.66666 4.99999C6.66666 3.15904 8.15904 1.66666 9.99999 1.66666C11.8409 1.66666 13.3333 3.15904 13.3333 4.99999Z" />
+                            </svg>
+                        </span>
+                        <span class="text">
+                            會員中心
+                        </span>
+                    </a>
+                </li>
+                @if (User.IsInRole("Seller"))
+                {
+                    <li class="nav-item nav-item-has-children">
+                        <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_1" aria-controls="ddmenu_1"
+                               aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.66666 1.04175C2.01183 1.04175 2.29166 1.32157 2.29166 1.66675V16.6667C2.29166 17.2421 2.75802 17.7084 3.33332 17.7084H18.3333C18.6785 17.7084 18.9583 17.9882 18.9583 18.3334C18.9583 18.6786 18.6785 18.9584 18.3333 18.9584H3.33332C2.06767 18.9584 1.04166 17.9324 1.04166 16.6667V1.66675C1.04166 1.32157 1.32148 1.04175 1.66666 1.04175Z" />
+                                    <path d="M4.16666 5.00008C4.16666 4.53985 4.53976 4.16675 4.99999 4.16675H8.33332C8.79357 4.16675 9.16666 4.53985 9.16666 5.00008V15.0001C9.16666 15.4603 8.79357 15.8334 8.33332 15.8334H4.99999C4.53976 15.8334 4.16666 15.4603 4.16666 15.0001V5.00008Z" />
+                                    <path d="M11.6667 8.33337C11.2064 8.33337 10.8333 8.70646 10.8333 9.16671V15C10.8333 15.4603 11.2064 15.8334 11.6667 15.8334H15C15.4603 15.8334 15.8333 15.4603 15.8333 15V9.16671C15.8333 8.70646 15.4603 8.33337 15 8.33337H11.6667Z" />
+                                </svg>
+                            </span>
+                            <span class="text">我是賣家</span>
+                        </a>
+                        <ul id="ddmenu_1" class="collapse dropdown-nav">
+                            <li>
+                                <a asp-area="Seller" asp-controller="SellerDashboard" asp-action="Dashboard">
+                                    經營分析中心
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Seller" asp-controller="SellerProduct" asp-action="All">
+                                    <span class="text">
+                                        所有商品
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Seller" asp-controller="SellerProduct" asp-action="New">
+                                    <span class="text">
+                                        新增商品
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Seller" asp-controller="SellerOrder" asp-action="Orders">
+                                    <span class="text">
+                                        查看訂單
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Seller" asp-controller="SellerShop" asp-action="Shop_settings">
+                                    <span class="text">
+                                        店鋪設定
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="Seller" asp-controller="Coupon" asp-action="CouponManagement">
+                                    <span class="text">
+                                        優惠券管理
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                <li class="nav-item nav-item-has-children">
+                    <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_2" aria-controls="ddmenu_2"
+                           aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.8097 1.66667C11.8315 1.66667 11.8533 1.6671 11.875 1.66796V4.16667C11.875 5.43232 12.901 6.45834 14.1667 6.45834H16.6654C16.6663 6.48007 16.6667 6.50186 16.6667 6.5237V16.6667C16.6667 17.5872 15.9205 18.3333 15 18.3333H5.00001C4.07954 18.3333 3.33334 17.5872 3.33334 16.6667V3.33334C3.33334 2.41286 4.07954 1.66667 5.00001 1.66667H11.8097ZM6.66668 7.70834C6.3215 7.70834 6.04168 7.98816 6.04168 8.33334C6.04168 8.67851 6.3215 8.95834 6.66668 8.95834H10C10.3452 8.95834 10.625 8.67851 10.625 8.33334C10.625 7.98816 10.3452 7.70834 10 7.70834H6.66668ZM6.04168 11.6667C6.04168 12.0118 6.3215 12.2917 6.66668 12.2917H13.3333C13.6785 12.2917 13.9583 12.0118 13.9583 11.6667C13.9583 11.3215 13.6785 11.0417 13.3333 11.0417H6.66668C6.3215 11.0417 6.04168 11.3215 6.04168 11.6667ZM6.66668 14.375C6.3215 14.375 6.04168 14.6548 6.04168 15C6.04168 15.3452 6.3215 15.625 6.66668 15.625H13.3333C13.6785 15.625 13.9583 15.3452 13.9583 15C13.9583 14.6548 13.6785 14.375 13.3333 14.375H6.66668Z" />
+                                <path d="M13.125 2.29167L16.0417 5.20834H14.1667C13.5913 5.20834 13.125 4.74197 13.125 4.16667V2.29167Z" />
+                            </svg>
+                        </span>
+                        <span class="text">帳號資訊</span>
+                    </a>
+                    <ul id="ddmenu_2" class="collapse dropdown-nav">
+                        <li>
+                            <a asp-area="Seller" asp-controller="Me" asp-action="Settings"> 個人資訊 </a>
+                        </li>
+                        @if (!User.IsInRole("Seller"))
+                        {
+                            <li>
+                                <a asp-area="Seller" asp-controller="Me" asp-action="SwitchSeller"> 我想成為賣家 </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Seller"))
+                        {
+                            <li>
+                                <a asp-area="Seller" asp-controller="Me" asp-action="BankAccountChange"> 變更收款帳戶 </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Seller" asp-controller="Me" asp-action="Orders">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3.33334 3.35442C3.33334 2.4223 4.07954 1.66666 5.00001 1.66666H15C15.9205 1.66666 16.6667 2.4223 16.6667 3.35442V16.8565C16.6667 17.5519 15.8827 17.9489 15.3333 17.5317L13.8333 16.3924C13.537 16.1673 13.1297 16.1673 12.8333 16.3924L10.5 18.1646C10.2037 18.3896 9.79634 18.3896 9.50001 18.1646L7.16668 16.3924C6.87038 16.1673 6.46298 16.1673 6.16668 16.3924L4.66668 17.5317C4.11731 17.9489 3.33334 17.5519 3.33334 16.8565V3.35442ZM4.79168 5.04218C4.79168 5.39173 5.0715 5.6751 5.41668 5.6751H10C10.3452 5.6751 10.625 5.39173 10.625 5.04218C10.625 4.69264 10.3452 4.40927 10 4.40927H5.41668C5.0715 4.40927 4.79168 4.69264 4.79168 5.04218ZM5.41668 7.7848C5.0715 7.7848 4.79168 8.06817 4.79168 8.41774C4.79168 8.76724 5.0715 9.05066 5.41668 9.05066H10C10.3452 9.05066 10.625 8.76724 10.625 8.41774C10.625 8.06817 10.3452 7.7848 10 7.7848H5.41668ZM4.79168 11.7932C4.79168 12.1428 5.0715 12.4262 5.41668 12.4262H10C10.3452 12.4262 10.625 12.1428 10.625 11.7932C10.625 11.4437 10.3452 11.1603 10 11.1603H5.41668C5.0715 11.1603 4.79168 11.4437 4.79168 11.7932ZM13.3333 4.40927C12.9882 4.40927 12.7083 4.69264 12.7083 5.04218C12.7083 5.39173 12.9882 5.6751 13.3333 5.6751H14.5833C14.9285 5.6751 15.2083 5.39173 15.2083 5.04218C15.2083 4.69264 14.9285 4.40927 14.5833 4.40927H13.3333ZM12.7083 8.41774C12.7083 8.76724 12.9882 9.05066 13.3333 9.05066H14.5833C14.9285 9.05066 15.2083 8.76724 15.2083 8.41774C15.2083 8.06817 14.9285 7.7848 14.5833 7.7848H13.3333C12.9882 7.7848 12.7083 8.06817 12.7083 8.41774ZM13.3333 11.1603C12.9882 11.1603 12.7083 11.4437 12.7083 11.7932C12.7083 12.1428 12.9882 12.4262 13.3333 12.4262H14.5833C14.9285 12.4262 15.2083 12.1428 15.2083 11.7932C15.2083 11.4437 14.9285 11.1603 14.5833 11.1603H13.3333Z" />
+                            </svg>
+                        </span>
+                        <span class="text">購買紀錄</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="Seller" asp-controller="Me" asp-action="Favorites">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.3333 15C18.3333 15.9205 17.5872 16.6667 16.6667 16.6667H3.33332C2.41285 16.6667 1.66666 15.9205 1.66666 15V4.99999C1.66666 4.07952 2.41285 3.33333 3.33332 3.33333H7.64296C8.085 3.33333 8.50891 3.50892 8.82149 3.82149L10.3452 5.34517C10.6577 5.65774 11.0817 5.83333 11.5237 5.83333H16.6667C17.5872 5.83333 18.3333 6.57952 18.3333 7.49999V15Z" />
+                                <path d="M16.4583 4.58333L16.0637 3.79399C15.9225 3.51166 15.6339 3.33333 15.3183 3.33333H10.1011L11.2291 4.46129C11.3072 4.53943 11.4132 4.58333 11.5237 4.58333H16.4583Z" />
+                            </svg>
+                        </span>
+                        <span class="text">
+                            我的最愛
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-area="" asp-controller="Chat" asp-action="Index">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.16666 3.33335C4.16666 2.41288 4.91285 1.66669 5.83332 1.66669H14.1667C15.0872 1.66669 15.8333 2.41288 15.8333 3.33335V16.6667C15.8333 17.5872 15.0872 18.3334 14.1667 18.3334H5.83332C4.91285 18.3334 4.16666 17.5872 4.16666 16.6667V3.33335ZM6.04166 5.00002C6.04166 5.3452 6.32148 5.62502 6.66666 5.62502H13.3333C13.6785 5.62502 13.9583 5.3452 13.9583 5.00002C13.9583 4.65485 13.6785 4.37502 13.3333 4.37502H6.66666C6.32148 4.37502 6.04166 4.65485 6.04166 5.00002ZM6.66666 6.87502C6.32148 6.87502 6.04166 7.15485 6.04166 7.50002C6.04166 7.8452 6.32148 8.12502 6.66666 8.12502H13.3333C13.6785 8.12502 13.9583 7.8452 13.9583 7.50002C13.9583 7.15485 13.6785 6.87502 13.3333 6.87502H6.66666ZM6.04166 10C6.04166 10.3452 6.32148 10.625 6.66666 10.625H9.99999C10.3452 10.625 10.625 10.3452 10.625 10C10.625 9.65485 10.3452 9.37502 9.99999 9.37502H6.66666C6.32148 9.37502 6.04166 9.65485 6.04166 10ZM9.99999 16.6667C10.9205 16.6667 11.6667 15.9205 11.6667 15C11.6667 14.0795 10.9205 13.3334 9.99999 13.3334C9.07949 13.3334 8.33332 14.0795 8.33332 15C8.33332 15.9205 9.07949 16.6667 9.99999 16.6667Z" />
+                            </svg>
+                        </span>
+                        <span class="text">
+                            聊天室
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a asp-area="" asp-controller="Home" asp-action="Logout">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4123C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
+                                <path d="M11.6383 15.18L15.805 11.0133C16.5373 10.2811 16.5373 9.09391 15.805 8.36166L11.6383 4.195C11.2722 3.82888 10.7923 3.64582 10.3125 3.64582V3.02082C10.3125 2.10035 11.0587 1.35416 11.9792 1.35416H16.9792C17.8997 1.35416 18.6458 2.10035 18.6458 3.02082V16.3542C18.6458 17.2747 17.8997 18.0208 16.9792 18.0208H11.9792C11.0587 18.0208 10.3125 17.2747 10.3125 16.3542V15.7292C10.7923 15.7292 11.2722 15.5461 11.6383 15.18Z" />
+                            </svg>
+                        </span>
+                        <span class="text">
+                            登出
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <div class="overlay"></div>
+    <!-- ======== sidebar-nav end =========== -->
+    <!-- ======== main-wrapper start =========== -->
+    <main class="main-wrapper">
+        <!-- ========== header start ========== -->
+        <header class="header">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-6">
+                        <div class="header-left d-flex align-items-center">
+                            <div class="menu-toggle-btn mr-15">
+                                <button id="menu-toggle" class="main-btn primary-btn btn-hover">
+                                    <i class="lni lni-chevron-left me-2"></i> 主選單
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-6">
+                        <div class="header-right">
+                            <!-- notification start -->
+                            @* <div class="notification-box ml-15 d-none d-md-flex">
+                                <button class="dropdown-toggle" type="button" id="notification" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#bell"></use></svg>
+                                </button>
+                            </div> *@
+                            <!-- notification end -->
+                            <!-- message start -->
+                            @* <div class="header-message-box ml-15 d-none d-md-flex">
+                                <a asp-area="" asp-controller="Chat" asp-action="Index"
+                                       class="rounded-circle bg-light p-2 mx-1"
+                                       style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: #000; width: 46px; height: 46px;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24"><use xlink:href="#message"></use></svg>
+                                </a>
+                            </div> *@
+                            <!-- message end -->
+                            <!-- profile start -->
+                            @* <div class="profile-box ml-15">
+                                <button class="dropdown-toggle bg-transparent border-0" type="button" id="profile"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    
+                                </button>
+                            </div> *@
+                            <!-- profile end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ========== header end ========== -->
+        @RenderBody()
+        <!-- ========== footer start =========== -->
+        <footer class="footer">
+        </footer>
+        <!-- ========== footer end =========== -->
+    </main>
+    <!-- ======== main-wrapper end =========== -->
+    <!-- ========= All Javascript files linkup ======== -->
+    <script src="~/seller_assets/js/bootstrap.bundle.min.js"></script>
+    <script src="~/seller_assets/js/Chart.min.js"></script>
+    <script src="~/seller_assets/js/apexcharts.min.js"></script>
+    <script src="~/seller_assets/js/dynamic-pie-chart.js"></script>
+    <script src="~/seller_assets/js/moment.min.js"></script>
+    <script src="~/seller_assets/js/fullcalendar.js"></script>
+    <script src="~/seller_assets/js/jvectormap.min.js"></script>
+    <script src="~/seller_assets/js/world-merc.js"></script>
+    <script src="~/seller_assets/js/polyfill.js"></script>
+    <script src="~/seller_assets/js/quill.min.js"></script>
+    <script src="~/seller_assets/js/datatable.js"></script>
+    <script src="~/seller_assets/js/Sortable.min.js"></script>
+    <script src="~/seller_assets/js/main.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        // 確保 logo 不被 main.js 的 theme 邏輯覆蓋
+        const logoEl = document.querySelector('.navbar-logo img');
+        if (logoEl) logoEl.src = '/ProductPicture/brand/Logo.png';
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
